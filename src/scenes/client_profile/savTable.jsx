@@ -3,7 +3,7 @@ import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses, GridLogicOperator, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { Grid, Box, InputBase, IconButton, Typography } from '@mui/material';
+import { Grid, Box, Typography } from '@mui/material';
 
 const ODD_OPACITY = 0.4;
 
@@ -116,13 +116,13 @@ export default function SavTable({ theme }) {
   ];
 
   return (
-    <Grid container xs={24} sm={24} md={24} lg={6} xl={6} style={{ borderRadius: '15px', overflow: 'hidden' }}>
+    <Grid container xs={24} sm={24} md={24} lg={6} xl={6} style={{ borderRadius: '15px' }}>
       <Box
         width="100%"
         marginBottom="20px"
         mt="20px"
         p="20px"
-        style={{ borderRadius: '15px', overflow: 'hidden', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
+        style={{ borderRadius: '15px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
         backgroundColor={theme.palette.primary.main}
       >
         <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} gutterBottom>

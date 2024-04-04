@@ -16,7 +16,7 @@ function App() {
         <Route index element={<Login />} />
       </Route>
 
-      {/* protected routes */}
+      {/* protected routes */}  
       <Route  element={<RequireAuth />}>
         <Route path="/*" element={<DashboardRoutes />} />
       </Route>

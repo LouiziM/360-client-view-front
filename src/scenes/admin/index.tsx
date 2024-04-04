@@ -14,6 +14,9 @@ import DialogActions from '@mui/material/DialogActions';
 import Alert, { AlertProps } from '@mui/material/Alert';
 import { useEffect, useState } from 'react';
 import { createSvgIcon } from '@mui/material/utils';
+import CircularProgress from '@mui/material/CircularProgress';
+import Switch from '@mui/material/Switch';
+import { alpha } from '@mui/material/styles';
 
 import {
   GridRowsProp,
@@ -39,7 +42,7 @@ import {
 
 } from '@mui/x-data-grid';
 import { useTheme } from "@mui/material";
-import { useGetAllUsersQuery, useUpdateMutation , useDeleteMutation } from '../../features/user_crud/crudSlice';
+import { useGetAllUsersQuery, useUpdateMutation , useDeleteMutation , useDeactivateMutation } from '../../features/user_crud/crudSlice';
 
 interface EditToolbarProps {
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -47,7 +50,6 @@ interface EditToolbarProps {
     newModel: (oldModel: GridRowModesModel) => GridRowModesModel,
   ) => void;
 }
-let idCounter=0 ;
 function EditToolbar(props: EditToolbarProps) {
   const { setRows, setRowModesModel } = props;
 
@@ -116,10 +118,12 @@ function EditToolbar(props: EditToolbarProps) {
     </GridToolbarContainer>
   );
 }
+let idCounter=0 ;
+
 interface User {
   username: string;
   password: string;
-  phoneNumber: number;
+  active: boolean;
   id: GridRowId;   
   creationDate: Date;
   lastLogin: Date;
@@ -129,15 +133,16 @@ const Admin = () => {
   const theme = useTheme();
   const [rows, setRows] = useState<GridRowsProp>([]);
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
-  // Confirmation Dialog (Popup):
   const noButtonRef = React.useRef<HTMLButtonElement>(null);
   const [promiseArguments, setPromiseArguments] = React.useState<any>(null);
   const [snackbar, setSnackbar] = useState<Pick<AlertProps, 'children' | 'severity'> | null>(null);
-  
+  const [Loading, setLoading] = useState(true);
+  const [deactivateMutation] = useDeactivateMutation();
+
   let {  data: users, isError } = useGetAllUsersQuery();
 
- 
-  const useFakeMutation = () => {
+
+const useFakeMutation = () => {
     return React.useCallback(
       (user: Partial<User>) =>
         new Promise<Partial<User>>((resolve, reject) => {
@@ -165,10 +170,14 @@ const Admin = () => {
           id,
           username: user.username,
           pwd: "*********",
+          active:user.active,
+          lastLogin:user.lastLogin,
+          creationDate:user.creationDate
         };
       });   
       setRows(mappedRows);
-      idCounter=greatest
+      setLoading(false);
+      idCounter=greatest;
     }
   }, [users, isError]);
   
@@ -271,6 +280,8 @@ const Admin = () => {
           await deleteMutation(deleteConfirmationRowId);
           setRows(rows.filter((row) => row.id !== deleteConfirmationRowId));
           setSnackbar({ children: 'Utilisateur supprimé avec succés', severity: 'success' });
+          console.log(idCounter)
+          --idCounter;
         }
     
         // Close the confirmation dialog
@@ -336,32 +347,82 @@ const Admin = () => {
     setRowModesModel(newRowModesModel);
   };
 
+  const dateTimeFormatter = (value: string) => {
+    if (!value) {
+        return '';
+    }
+    const date = new Date(value);
+    if (isNaN(date.getTime())) {
+        return ''; 
+    }
+    const formattedDate = new Intl.DateTimeFormat('fr-CA', {
+        year: 'numeric', month: '2-digit', day: '2-digit'
+    }).format(date);
+    const formattedTime = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+    return `${formattedDate} à ${formattedTime}`;
+};
+
+
   const columns: GridColDef[] = [
     { field: 'username', headerName: 'Utilisateur',type: 'string', width: 180, editable: true },
     { field: 'pwd', headerName: 'Mot de passe',type: 'string', width: 180, editable: true },
-    {
-      field: 'phoneNumber',
-      headerName: 'Tel',
-      type: 'number',
-      width: 80,
-      align: 'left',
-      headerAlign: 'left',
-      editable: true,
-    },
+   
+    
     {
       field: 'lastLogin',
       headerName: 'dérniere connexion',
-      type: 'date',
+      type: 'string',
       width: 180,
       editable: false,
+      valueFormatter: ({ value }) => dateTimeFormatter(value)
+
     },
     {
       field: 'creationDate',
       headerName: 'Date de création',
-      type: 'date',
+      type: 'string',
       width: 180,
       editable: false,
+      valueFormatter: ({ value }) => dateTimeFormatter(value)
+
     },
+    {
+      field: 'active',
+      headerName: 'Active',
+      width: 120,
+      renderCell: (params) => {
+        const isInEditMode = rowModesModel[params.id]?.mode === GridRowModes.Edit;
+    
+        if (isInEditMode) {
+          return null; 
+        }
+    
+        return (
+          <Switch
+            checked={params.row.active}
+            onChange={(event) => {
+              const uId = params.id;
+              const { checked } = event.target;
+              console.log(checked);
+              deactivateMutation({ id: uId, isActive: checked });
+              params.row.active = checked;
+            }}
+            sx={{
+              '& .MuiSwitch-switchBase.Mui-checked': {
+                color: theme.palette.secondary.light,
+                '&:hover': {
+                  backgroundColor: alpha(theme.palette.secondary.light, 0.4),
+                },
+              },
+              '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                backgroundColor: theme.palette.secondary.light,
+              },
+            }}
+          />
+        );
+      },
+    }
+,    
     {
       field: 'actions',
       type: 'actions',
@@ -376,9 +437,7 @@ const Admin = () => {
             <GridActionsCellItem
               icon={<SaveIcon />}
               label="Save"
-              sx={{
-                color: 'primary.main',
-              }}
+              
               onClick={handleSaveClick(id)}
             />,
             <GridActionsCellItem
@@ -442,12 +501,9 @@ const Admin = () => {
   
 
   return (
-    <Box
-    m="1.5rem 2.5rem"
-      
+    <Box m="1.5rem 2.5rem"
       sx={{
         height: 500,
-        
         '& .actions': {
           color: theme.palette.text.secondary,
         },
@@ -456,63 +512,107 @@ const Admin = () => {
         },
       }}
     >
-      {renderDeleteConfirmationDialog()}
-
-      {renderConfirmDialog()}
-
-      <DataGrid
-        localeText={{
-          toolbarColumns: "Colonnes",
-          toolbarFilters: "Filtrer",
-          toolbarDensity: "Densité",
-        }}
-        rows={rows}
-        columns={columns}
-        editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
-        onRowEditStop={handleRowEditStop}
-
-        processRowUpdate={processRowUpdate}
-
-        slots={{
-          toolbar: EditToolbar,
-        }}
-        slotProps={{
-          toolbar: { setRows, setRowModesModel },
-        }}
-         sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: theme.palette.background.alt,
-            color: theme.palette.secondary[100],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: theme.palette.primary.light,
-          },
-          "& .MuiDataGrid-footerContainer": {
-            backgroundColor: theme.palette.background.alt,
-            color: theme.palette.secondary[100],
-            borderTop: "none",
-          },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${theme.palette.secondary[200]} !important`,
-          },
-        }}
-      />
-      {!!snackbar && (
-        <Snackbar style={{ position: "fixed", marginLeft: "250px", marginBottom: "0px" }} open onClose={handleCloseSnackbar} autoHideDuration={6000}>
-          <Alert {...snackbar} onClose={handleCloseSnackbar} />
-        </Snackbar>
+      {Loading ? (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="500px"
+        >
+          <CircularProgress sx={{color:theme.palette.secondary.light}} />
+        </Box>
+      ) : (
+        <>
+          {renderDeleteConfirmationDialog()}
+          {renderConfirmDialog()}
+          <DataGrid
+            localeText={{
+              toolbarColumns: "Colonnes",
+              toolbarFilters: "Filtrer",
+              toolbarDensity: "Densité",
+              MuiTablePagination: {
+                labelDisplayedRows: ({ from, to, count }) =>
+                  `${from} - ${to} de ${count}`,
+                
+              },
+            }}
+            rows={rows}
+            columns={columns}
+            editMode="row"
+            rowModesModel={rowModesModel}
+            onRowModesModelChange={handleRowModesModelChange}
+            onRowEditStop={handleRowEditStop}
+            processRowUpdate={processRowUpdate}
+            slots={{
+              toolbar: EditToolbar,
+            }}
+            slotProps={{
+              toolbar: { setRows, setRowModesModel },
+            }}
+            sx={{
+              "& .MuiDataGrid-root": {
+                border: "none",
+              },
+              "& .MuiDataGrid-cell": {
+                borderBottom: "none",
+              },
+              "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: theme.palette.background.alt,
+                borderBottom: "none",
+              },
+              "& .MuiDataGrid-virtualScroller": {
+                backgroundColor: theme.palette.primary.light,
+              },
+              "& .MuiDataGrid-footerContainer": {
+                backgroundColor: theme.palette.background.alt,
+                color: theme.palette.secondary[100],
+                borderTop: "none",
+              },
+              "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+                color: `${theme.palette.secondary[200]} !important`,
+              },
+              '& .MuiDataGrid-selectedRowCount': {
+                visibility: 'hidden',
+                padding: 0, 
+                margin: 0,
+              },
+              '& .MuiDataGrid-selectedRowCount::before': {
+                content: '""',
+              },
+              '& .MuiDataGrid-selectedRowCount::after': {
+                content: '"1 ligne sélectionnée"', 
+                visibility: 'visible', 
+                display: 'inline',
+                padding: 0, 
+                margin: "-9vh",
+              },
+              '& .MuiTablePagination-selectLabel': {
+                visibility: 'hidden',
+                padding: 0, 
+                margin: 0, 
+              },
+              '& .MuiTablePagination-selectLabel::before': {
+                content: '""',
+              },
+              '& .MuiTablePagination-selectLabel::after': {
+                content: '"Lignes par page"', 
+                visibility: 'visible', 
+                display: 'inline',
+                padding: 0, 
+                margin: 0, 
+              },
+            }}
+          />
+          {!!snackbar && (
+            <Snackbar style={{ position: "fixed", marginLeft: "250px", marginBottom: "0px" }} open onClose={handleCloseSnackbar} autoHideDuration={6000}>
+              <Alert {...snackbar} onClose={handleCloseSnackbar} />
+            </Snackbar>
+          )}
+        </>
       )}
     </Box>
   );
+  
 };
 
 export default Admin;

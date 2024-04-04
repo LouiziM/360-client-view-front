@@ -2,7 +2,6 @@ import React from "react";
 import {
   Box,
   Drawer,
-  IconButton,
   List,
   ListItem,
   ListItemButton,
@@ -12,32 +11,23 @@ import {
   useTheme,
 } from "@mui/material";
 import {
-  ChevronLeft,
   ChevronRightOutlined,
-  HomeOutlined,
   AdminPanelSettingsOutlined,
 } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import FlexBetween from "./FlexBetween";
 import logoImage from "assets/logo.jpg";
+import GroupsIcon from '@mui/icons-material/Groups';
 
 const navItems = [
-  {
-    text: "Dashboard",
-    icon: <HomeOutlined />,
-  },
+  
   {
     text: "Admin",
     icon: <AdminPanelSettingsOutlined />,
   },
   {
-    text: "Clientprofile",
-    icon: <ChevronRightOutlined/>
-  },
-  {
-    text: "playground",
-    icon: <ChevronRightOutlined/>
+    text: "Clients",
+    icon: <GroupsIcon/>
   },
 ];
 
@@ -67,7 +57,7 @@ const Sidebar = ({
           sx={{
             width: drawerWidth,
             "& .MuiDrawer-paper": {
-              color: theme.palette.secondary[200],
+           
               backgroundColor: theme.palette.secondary[700],
               boxSixing: "border-box",
               borderWidth: isNonMobile ? 0 : "2px",
@@ -76,22 +66,11 @@ const Sidebar = ({
           }}
         >
           <Box width="100%">
-          <Box m="1.5rem 2rem 2rem 3rem">
-  <FlexBetween color={theme.palette.secondary.main}>
-    <Box display="flex" alignItems="center" gap="0.5rem" sx={{ textAlign: "center" }}>
-      <Typography variant="h3" fontWeight="bold">
-        CUSTOMER <br /> DATA <br /> PLATFORM
-      </Typography>
-    </Box>
-    {!isNonMobile && (
-      <IconButton onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-        <ChevronLeft />
-      </IconButton>
-    )}
-  </FlexBetween>
-</Box>
+         
 
             <Box
+            mt={7}
+            mb={3}
                 component="img"
                 alt="profile"
                 src={logoImage}

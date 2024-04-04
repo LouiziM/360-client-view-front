@@ -12,17 +12,17 @@ const FinancialData = ({ theme }) => {
   ];
 
   return (
-    <Grid container rowSpacing={1} xs={12} sm={12} md={12} lg={12} xl={12} style={{ borderRadius: '15px', overflow: 'hidden' }}>
+    <Grid container rowSpacing={1} xs={12} sm={12} md={12} lg={6} xl={12} style={{ borderRadius: '15px' }}>
       <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
         <Box
           marginBottom="20px"
           mt="20px"   
           p="20px"
-          style={{ borderRadius: '15px', overflow: 'hidden', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }} 
+          style={{ borderRadius: '15px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }} 
           backgroundColor={theme.palette.primary.main}
         >
           <Box display="flex" flexDirection="row" justifyContent="space-between">
-                <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} gutterBottom>
+                <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} >
                     Informations financières
                 </Typography>
                 <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light}>
@@ -37,7 +37,7 @@ const FinancialData = ({ theme }) => {
                 <div style={{ width: '50%', paddingBottom: '56%', position: 'relative' }}>
                   <img src={icon} alt={label} style={{ width: '100%', height: '75%', position: 'absolute', top: 20, left: 0 }} />
                 </div>
-                <Typography mt="20px"  variant="h2"  color={theme.palette.secondary.light} textAlign="center">
+                <Typography mt="2vh"  variant="h2"  color={theme.palette.secondary.light} textAlign="center">
                   {value}
                 </Typography>
                 <Typography  variant="h6" fontWeight="bold"  textAlign="center">

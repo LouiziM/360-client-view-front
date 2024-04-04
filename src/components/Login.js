@@ -31,7 +31,7 @@ const Login = () => {
 
   const handleRememberMeChange = (e) => setRemember(e.target.checked);
   const storedToken = localStorage.getItem("authToken");
-  if(storedToken) navigate('/dashboard');
+  if(storedToken) navigate('/clients');
 
   useEffect(() => {
     userRef.current && userRef.current.focus();
@@ -52,7 +52,7 @@ const Login = () => {
       dispatch(setCredentials({ ...userData, user, remember }));
       setUser('');
       setPwd('');
-      navigate('/dashboard');
+      navigate('/clients');
     } catch (err) {
       if (!err?.originalStatus) {
         setErrMsg('Aucune réponse du serveur');

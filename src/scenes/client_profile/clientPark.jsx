@@ -15,7 +15,7 @@ const ClientPark = ({ theme }) => {
         marginBottom="20px"
         mt="20px"
         p="20px"
-        style={{ borderRadius: '15px', overflow: 'hidden', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
+        style={{ borderRadius: '15px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
         backgroundColor={theme.palette.primary.main}
       >
         <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} gutterBottom>
@@ -23,15 +23,15 @@ const ClientPark = ({ theme }) => {
         </Typography>
         <hr style={{ border: '1px solid #ccc', marginBottom: "20px" }} />
         <Box mb="20px" display="flex" justifyContent="space-between" gap={2}>
-          <Card sx={{ flexGrow: 1, width: "45%", backgroundColor: theme.palette.secondary.faint, borderRadius: '10px' }}>
-            <CardContent style={{ textAlign: 'center' }}>
-              <Typography>
+          <Card sx={{ flexGrow: 1, width: "45%", backgroundColor: theme.palette.secondary.faint, borderRadius: '10px', display: 'flex', alignItems: 'center' }}>
+            <CardContent sx={{ width: '100%', textAlign: 'center' }}>
+              <Typography >
                 Commercial: Mr. Prénom Nom
               </Typography>
             </CardContent>
           </Card>
-          <Card sx={{ flexGrow: 1, backgroundColor: theme.palette.secondary.faint, borderRadius: '10px' }}>
-            <CardContent style={{ textAlign: 'center' }}>
+          <Card sx={{ flexGrow: 1, backgroundColor: theme.palette.secondary.faint, borderRadius: '10px', display: 'flex', alignItems: 'center' }}>
+            <CardContent sx={{ width: '100%', textAlign: 'center' }}>
               <Typography>
                 Dernier achat: 19-11-2007
               </Typography>

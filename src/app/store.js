@@ -4,7 +4,7 @@ import authReducer from '../features/auth/authSlice';
 import { persistStore, persistReducer } from "redux-persist";
 import storageSession from "redux-persist/lib/storage/session";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { api } from "../features/state/api";
+import { clientSlice } from "features/state/clientSlice";
 
 // Configuration for redux-persist
 const persistConfig = {
@@ -31,15 +31,14 @@ const globalSlice = createSlice({
 // Combine the reducers
 const rootReducer = {
   [apiSlice.reducerPath]: apiSlice.reducer,
-  [api.reducerPath]: api.reducer,
   auth: persistedAuthReducer,
   global: globalSlice.reducer, 
+  [clientSlice.reducerPath]: clientSlice.reducer, 
 };
 
 const combinedMiddleware = [
   ...getDefaultMiddleware(),
   apiSlice.middleware,
-  api.middleware,
 ];
 
 // Create the store with combined reducers and middleware

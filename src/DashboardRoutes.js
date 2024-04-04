@@ -5,10 +5,9 @@ import { useSelector } from "react-redux";
 import {  Route, Routes } from "react-router-dom";
 import { themeSettings } from "theme";
 import Layout from "scenes/layout";
-import Dashboard from "scenes/dashboard";
 import Admin from "scenes/admin/index.tsx";
 import ClientProfile from "scenes/client_profile/clientProfile";
-import ClientList from "scenes/playground/clientList";
+import ClientList from "scenes/clients/clientList.tsx";
 
 
 function App() {
@@ -20,10 +19,9 @@ function App() {
           <CssBaseline />
           <Routes>
             <Route element={<Layout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/clientprofile" element={<ClientProfile />} />
-            <Route path="/playground" element={<ClientList />} />
+            <Route path="/clients" element={<ClientList />} />
             </Route>
           </Routes>
         </ThemeProvider>

@@ -47,7 +47,7 @@ const ClientSatisfaction = ({ theme }) => {
         marginBottom="20px"
         mt="20px"
         p="20px"
-        style={{ borderRadius: '15px', overflow: 'hidden', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
+        style={{ borderRadius: '15px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
         backgroundColor={theme.palette.primary.main}
       >
         <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} gutterBottom>

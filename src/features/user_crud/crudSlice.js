@@ -9,7 +9,7 @@ export const crudApiSlice = apiSlice.injectEndpoints({
                 method: 'GET',
             }),
             transformResponse: (response) => {
-                // Assuming your response is an array of objects
+
                 return response.map((user, index) => ({ ...user, id: index + 1 }));
             },
             providesTags: ['users'],
@@ -41,6 +41,14 @@ export const crudApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['users'],
         }),
+        deactivate: builder.mutation({
+            query: ({ id, isActive }) => ({
+              url: `/users/deactivate`,
+              method: 'PUT',
+              body: { isActive ,id }
+            }),
+            invalidatesTags: ['users'],
+          }),
     })
 });
 
@@ -48,5 +56,6 @@ export const {
     useGetAllUsersQuery,
     useCreateMutation,
     useUpdateMutation,
-    useDeleteMutation
+    useDeleteMutation,
+    useDeactivateMutation
 } = crudApiSlice;

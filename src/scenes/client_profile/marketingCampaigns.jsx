@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { alpha, styled} from '@mui/material/styles';
+import React, { useState } from 'react';
+import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses, GridLogicOperator, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import { Grid, Box, Typography } from '@mui/material';
-import ReactApexChart from 'react-apexcharts';
+import { ResponsiveRadialBar } from "@nivo/radial-bar";
 
 const ODD_OPACITY = 0.4;
 
@@ -25,7 +25,6 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
           theme.palette.secondary.light,
           ODD_OPACITY
         ),
-        // Reset on touch devices, it doesn't add specificity
         '@media (hover: none)': {
           backgroundColor: alpha(
             theme.palette.secondary.light,
@@ -35,7 +34,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
       },
     },
   },
-  [`& .${gridClasses.row}.odd`]: { 
+  [`& .${gridClasses.row}.odd`]: {
     '&.Mui-selected': {
       backgroundColor: alpha(
         theme.palette.primary.dark,
@@ -46,29 +45,97 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
       backgroundColor: alpha(theme.palette.primary.dark, ODD_OPACITY),
       '@media (hover: none)': {
         backgroundColor: 'transparent',
-      },  
+      },
     }
-  }, 
+  },
 }));
 
+const LegendItem = styled(Box)({
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  '&:hover': {
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  },
+});
+
 const MarketingCampaigns = ({ theme }) => {
-  const rows = React.useMemo(
-    () => {
-      const data = [];
-      for (let i = 1; i <= 50; i++) {
-        data.push({ 
-          id: i, 
-          titre: `Titre ${i}`, 
-          marque: `Marque ${i % 5 + 1}`, 
-          type: `Type ${i % 3 + 1}`, 
-          date: `2024-03-${15 + i % 30}`, 
-          contenu: `Contenu ${i}`
-        });
-      }
-      return data;
+  const defaultDataColors = ["#3f51b5", "#4caf50", "#00a7c4"];
+  const [dataColors, setDataColors] = useState(defaultDataColors);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  const data = [
+    {
+      id: "Réponses aux campagnes",
+      data: [{ x: "Réponses aux campagnes", y: 100 }]
     },
-    []
+    {
+      id: "Retour sur investissement",
+      data: [{ x: "Retour sur investissement", y: 51 }]
+    },
+    {
+      id: "Conversion Campagne",
+      data: [{ x: "Conversion Campagne", y: 80 }]
+    }
+  ];
+
+  const handleLegendHover = (color, index) => {
+    setHoveredIndex(index);
+    const newColors = defaultDataColors.map((c, i) => (i === index ? color : 'transparent'));
+    setDataColors(newColors);
+  };
+
+  const resetColors = () => {
+    setDataColors(defaultDataColors);
+    setHoveredIndex(null);
+  };
+
+  const Legend = () => (
+    <Box
+      onMouseLeave={() => resetColors()}
+      display="flex"
+      flexDirection="column"
+      width="16vw"
+      style={{ transform: 'translateY(-15vh)' }}
+    >
+      {data.map((item, index) => (
+        <LegendItem
+          key={index}
+          onMouseEnter={() => handleLegendHover(defaultDataColors[index], index)}
+          onMouseLeave={() => resetColors()}
+        >
+          <Box
+            width="18px"
+            height="18px"
+            borderRadius="50%"
+            backgroundColor={dataColors[index]}
+            marginRight="5px"
+            marginBottom="2px"
+          />
+         <Typography variant="body2">
+            {item.id} <strong>{item.data[0].y}%</strong>
+          </Typography>
+
+        </LegendItem>
+      ))}
+    </Box>
   );
+
+  const rows = React.useMemo(() => {
+    const data = [];
+    for (let i = 1; i <= 50; i++) {
+      data.push({
+        id: i,
+        titre: `Titre ${i}`,
+        marque: `Marque ${i % 5 + 1}`,
+        type: `Type ${i % 3 + 1}`,
+        date: `2024-03-${15 + i % 30}`,
+        contenu: `Contenu ${i}`
+      });
+    }
+    return data;
+  }, []);
 
   const columns = [
     { field: 'titre', headerName: 'Titre', flex: 1 },
@@ -78,48 +145,107 @@ const MarketingCampaigns = ({ theme }) => {
     { field: 'contenu', headerName: 'Contenu', flex: 1 },
   ];
 
+  const Metric = ({ center }) => {
+    if (hoveredIndex !== null) {
+      const value = data[hoveredIndex].data[0].y;
+      return (
+        <text
+          x={center[0]}
+          y={center[1]}
+          textAnchor="middle"
+          dominantBaseline="central"
+          style={{
+            fontSize: 20,
+            fontWeight:"bold"
+          }}
+        >
+         {value}%
+        </text>
+      );
+    }
+    return null;
+  };
   return (
-    <Grid container xs={17.5} sm={24} md={24} lg={17.5} xl={17.5} style={{ borderRadius: '15px'}}>
+    <Grid container xs={17.5} sm={24} md={24} lg={17.5} xl={17.5} style={{ borderRadius: '15px', position: 'relative' }}>
       <Box
         width="100%"
         marginBottom="20px"
         mt="20px"
         p="20px"
-        style={{ borderRadius: '15px', overflow: 'hidden', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
+        style={{ borderRadius: '15px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
         backgroundColor={theme.palette.primary.main}
         display="flex"
         flexDirection="column"
+        position="relative"
       >
-        <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} gutterBottom>
+        <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} >
           Campagnes marketing
         </Typography>
-        <hr style={{ border: '1px solid #ccc', width: '100%', marginBottom:"20px"}} />
-        
-        <Box display="flex" flexGrow={1}>
-          <Box style={{  flex: '5 5 0' }}>
-            <ReactApexChartComponent />
+        <hr style={{ border: '1px solid #ccc', width: '100%', marginBottom: "20px" }} />
+
+        <Box display="flex">
+          <Box
+            justifyContent={"center"}
+            style={{
+              flex: '5 5 0',
+              transform: 'translateX(4vw)'
+            }}
+          >
+            <ResponsiveRadialBar
+              data={data}
+              innerRadius={0.3}
+              padding={0.35}
+              cornerRadius={1.5}
+              colors={dataColors}
+              borderColor={{
+                from: 'color',
+                modifiers: [['darker', '1']]
+              }}
+              enableTracks={false}
+              circularAxisOuter={null}
+              labelsSkipAngle={0}
+              labelsRadiusOffset={0}
+              width={220}
+              height={260}
+              radialAxisStart={null}
+              isInteractive={false}
+              margin={{ bottom: 40 }}
+              labelsTextColor={{ theme: 'grid.line.stroke' }}
+              motionConfig={{
+                mass: 6,
+                tension: 320,
+                friction: 114,
+                clamp: false,
+                precision: 0.01,
+                velocity: 0.05
+              }}
+              transitionMode="startAngle"
+              layers={['grid', 'tracks', 'bars', 'labels', Metric]}
+            />
+            <Legend/>
           </Box>
+
           <Box style={{ flex: '6 6 0' }}>
             <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} gutterBottom>
               Historique de participation aux campagnes
             </Typography>
             <StripedDataGrid
-          rows={rows}
-          columns={columns}
-          getRowClassName={(params) =>
-            params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
-          }
-          sx={{ '&, [class^=MuiDataGrid]': { borderBottom: 'none', borderRight: 'none', borderLeft: 'none', borderTop: 'none', maxHeight: 'calc(100vh - 330px)' } }}
-          initialState={{
-            filter: {
-              filterModel: {
-                items: [],
-                quickFilterLogicOperator: GridLogicOperator.Or,
-              },
-            },
-          }}
-          slots={{ toolbar: QuickSearchToolbar }}
-        />
+              rows={rows}
+              columns={columns}
+              getRowClassName={(params) =>
+                params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
+              }
+              sx={{ '&, [class^=MuiDataGrid]': { borderBottom: 'none', borderRight: 'none', borderLeft: 'none', borderTop: 'none', maxHeight: 'calc(100vh - 330px)' } }}
+              initialState={{
+                filter: {
+                  filterModel: {
+                    items: [],
+                    quickFilterLogicOperator: GridLogicOperator.Or,
+                  },
+                },
+              }}
+              slots={{ toolbar: QuickSearchToolbar }}
+            />
           </Box>
         </Box>
       </Box>
@@ -138,7 +264,7 @@ function QuickSearchToolbar() {
       backgroundColor={"#ffffff"}
       borderRadius="9px"
       border="1px solid"
-      borderColor={"#004BAB"}  
+      borderColor={"#004BAB"}
       p="0rem 0.5rem"
       width="100%"
       height="70px"
@@ -150,89 +276,12 @@ function QuickSearchToolbar() {
             .map((value) => value.trim())
             .filter((value) => value !== '')
         }
-        sx={{width:"100%",
-        pt:1.5,
-        pb: 0,}}
+        sx={{
+          width: "100%",
+          pt: 1.5,
+          pb: 0,
+        }}
       />
-     
     </Box>
   );
 }
-
-const ReactApexChartComponent = () => {
-  const options = {
-    chart: {
-      height: 230,
-      type: "radialBar",
-    },
-    plotOptions: {
-      radialBar: {
-        offsetY: 50,
-        offsetX: 40,
-        startAngle: 0,
-        endAngle: 220,
-        hollow: {
-          margin: 5,
-          size: "30%",
-          background: "transparent",
-          image: undefined,
-        },
-        dataLabels: {
-          name: {
-            show: false,
-          },
-          value: {
-            show: false,
-          },
-        },
-      },
-    },
-    colors: ["#1ab7ea", "#0084ff", "#39539E", "#0077B5"],
-    labels: [
-      "Conversion Campagne",
-      "Retour sur investissement",
-      "Réponse aux campagnes",
-    ],
-    legend: {
-      show: true,
-      floating: true,
-      fontSize: "13px",
-      position: "left",
-      offsetX: -30,
-      offsetY:95,
-      labels: {
-        useSeriesColors: true,
-      },
-      markers: {
-        size: 0,
-      },
-      formatter: function (seriesName, opts) {
-        return seriesName + "  " + opts.w.globals.series[opts.seriesIndex];
-      },
-      itemMargin: {
-        vertical: 4,
-      },
-    },
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          legend: {
-            show: false,
-          },
-        },
-      },
-    ],
-  };
-
-  const series = [100, 67, 30];
-
-  return (
-    <ReactApexChart
-      options={options}
-      series={series}
-      type={options.chart.type}
-      height={options.chart.height}
-    />
-  );
-};

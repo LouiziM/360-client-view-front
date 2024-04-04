@@ -8,7 +8,7 @@ import { useTheme } from "@mui/system";
 import LogoutIcon from '@mui/icons-material/Logout';
 
 
-const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
+const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
 
