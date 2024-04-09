@@ -223,6 +223,9 @@ const Clients = () => {
                   padding: 0, 
                   margin: 0, 
                 },
+                '& .MuiDataGrid-columnHeaderTitle': {
+                  fontWeight: 'bold',
+              },
               }}
             />
 

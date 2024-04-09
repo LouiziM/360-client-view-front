@@ -23,20 +23,20 @@ const ClientPark = ({ theme }) => {
         </Typography>
         <hr style={{ border: '1px solid #ccc', marginBottom: "20px" }} />
         <Box mb="20px" display="flex" justifyContent="space-between" gap={2}>
-          <Card sx={{ flexGrow: 1, width: "45%", backgroundColor: theme.palette.secondary.faint, borderRadius: '10px', display: 'flex', alignItems: 'center' }}>
-            <CardContent sx={{ width: '100%', textAlign: 'center' }}>
-              <Typography >
-                Commercial: Mr. Prénom Nom
-              </Typography>
-            </CardContent>
-          </Card>
-          <Card sx={{ flexGrow: 1, backgroundColor: theme.palette.secondary.faint, borderRadius: '10px', display: 'flex', alignItems: 'center' }}>
-            <CardContent sx={{ width: '100%', textAlign: 'center' }}>
-              <Typography>
-                Dernier achat: 19-11-2007
-              </Typography>
-            </CardContent>
-          </Card>
+        <Card sx={{ flexGrow: 1, width: "45%", backgroundColor: theme.palette.secondary.faint, borderRadius: '10px', display: 'flex', alignItems: 'center' }}>
+                <CardContent sx={{ width: '100%', textAlign: 'center' }}>
+                    <Typography style={{ fontWeight: 600 }}>
+                        Commercial: Mr. Prénom Nom
+                    </Typography>
+                </CardContent>
+            </Card>
+            <Card sx={{ flexGrow: 1, backgroundColor: theme.palette.secondary.faint, borderRadius: '10px', display: 'flex', alignItems: 'center' }}>
+                <CardContent sx={{ width: '100%', textAlign: 'center' }}>
+                    <Typography style={{ fontWeight: 600 }}>
+                        Dernier achat: 19-11-2007
+                    </Typography>
+                </CardContent>
+            </Card>
         </Box>
         <Grid  container spacing={2} style={{ overflowY: 'scroll', maxHeight: 'calc(100vh - 330px)' }}>
           {clientData.map((data, index) => (

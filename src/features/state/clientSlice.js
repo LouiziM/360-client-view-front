@@ -19,8 +19,15 @@ export const clientSlice = apiSlice.injectEndpoints({
         }),
         providesTags: ['completion'],
       }),
+    getCustomersPerRegion: builder.query({
+        query: () => ({
+          url: `/clients/customer-count-by-region`, 
+          method: 'GET',
+        }),
+        providesTags: ['regionCount'],
+      }),
       
   }),
 });
 
-export const { useGetAllClientsQuery, useGetCompletionQuery } = clientSlice;
+export const { useGetAllClientsQuery, useGetCompletionQuery,useGetCustomersPerRegionQuery } = clientSlice;

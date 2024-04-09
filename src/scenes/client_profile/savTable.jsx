@@ -103,7 +103,7 @@ export default function SavTable({ theme }) {
 
   const columns = [
     { field: 'date', headerName: 'Date de visite', flex: 1},
-    { field: 'amount', headerName: 'Montant dépensé', flex: 1 },
+    { field: 'amount', headerName: 'Montant dépensé', flex: 1.1 },
     { 
       field: 'satisfaction', 
       headerName: 'Satisfaction', 
@@ -136,8 +136,20 @@ export default function SavTable({ theme }) {
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
           }
-          sx={{ '&, [class^=MuiDataGrid]': { borderBottom: 'none', borderRight: 'none', borderLeft: 'none', borderTop: 'none', maxHeight: 'calc(100vh - 300px)' } }}
-          initialState={{
+          sx={{ 
+            '&, [class^=MuiDataGrid]': { 
+                borderBottom: 'none', 
+                borderRight: 'none', 
+                borderLeft: 'none', 
+                borderTop: 'none', 
+                maxHeight: 'calc(100vh - 300px)',
+               
+                '& .MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold',
+                },
+            },
+        }}
+                  initialState={{
             filter: {
               filterModel: {
                 items: [],

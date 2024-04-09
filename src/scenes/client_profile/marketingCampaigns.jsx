@@ -183,7 +183,8 @@ const MarketingCampaigns = ({ theme }) => {
         </Typography>
         <hr style={{ border: '1px solid #ccc', width: '100%', marginBottom: "20px" }} />
 
-        <Box display="flex">
+        <Box display="flex"       onMouseLeave={() => resetColors()}
+>
           <Box
             justifyContent={"center"}
             style={{
@@ -210,6 +211,7 @@ const MarketingCampaigns = ({ theme }) => {
               radialAxisStart={null}
               isInteractive={false}
               margin={{ bottom: 40 }}
+              cornerRadius={16}
               labelsTextColor={{ theme: 'grid.line.stroke' }}
               motionConfig={{
                 mass: 6,
@@ -235,8 +237,20 @@ const MarketingCampaigns = ({ theme }) => {
               getRowClassName={(params) =>
                 params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
               }
-              sx={{ '&, [class^=MuiDataGrid]': { borderBottom: 'none', borderRight: 'none', borderLeft: 'none', borderTop: 'none', maxHeight: 'calc(100vh - 330px)' } }}
-              initialState={{
+              sx={{ 
+                '&, [class^=MuiDataGrid]': { 
+                    borderBottom: 'none', 
+                    borderRight: 'none', 
+                    borderLeft: 'none', 
+                    borderTop: 'none', 
+                    maxHeight: 'calc(100vh - 300px)',
+                   
+                    '& .MuiDataGrid-columnHeaderTitle': {
+                        fontWeight: 'bold',
+                    },
+                },
+            }}              
+                initialState={{
                 filter: {
                   filterModel: {
                     items: [],

@@ -8,7 +8,8 @@ import Layout from "scenes/layout";
 import Admin from "scenes/admin/index.tsx";
 import ClientProfile from "scenes/client_profile/clientProfile";
 import ClientList from "scenes/clients/clientList.tsx";
-
+import ClientsMap from "scenes/map/clientsMap";
+// import WidgetGeoMap from "scenes/playground/WidgetGeoMap"
 
 function App() {
   const mode = useSelector((state) => state.global.mode);
@@ -22,6 +23,9 @@ function App() {
             <Route path="/admin" element={<Admin />} />
             <Route path="/clientprofile" element={<ClientProfile />} />
             <Route path="/clients" element={<ClientList />} />
+            <Route path="/map" element={<ClientsMap />} />
+            {/* <Route path="/pg" element={<WidgetGeoMap />} /> */}
+
             </Route>
           </Routes>
         </ThemeProvider>

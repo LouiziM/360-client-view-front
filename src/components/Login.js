@@ -130,22 +130,6 @@ const Login = () => {
           >
             Se connecter
           </Button>
-
-          <Grid container>
-            <Grid item xs>
-              <Link
-                href="#"
-                variant="body2"
-                sx={{
-                  '&:hover': {
-                    color: 'black',
-                  },
-                }}
-              >
-                Mot de passe oublié ?
-              </Link>
-            </Grid>
-          </Grid>
         </form>
       </Box>
     </Container>

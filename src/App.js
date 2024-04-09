@@ -1,4 +1,4 @@
-// App.js
+// 3
 import React from 'react';
 import Login from './components/Login';
 import RequireAuth from './features/auth/RequireAuth';

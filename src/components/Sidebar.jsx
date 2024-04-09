@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logoImage from "assets/logo.jpg";
 import GroupsIcon from '@mui/icons-material/Groups';
+import MapIcon from '@mui/icons-material/Map';
 
 const navItems = [
   
@@ -28,6 +29,10 @@ const navItems = [
   {
     text: "Clients",
     icon: <GroupsIcon/>
+  },
+  {
+    text: "Map",
+    icon: <MapIcon/>
   },
 ];
 
