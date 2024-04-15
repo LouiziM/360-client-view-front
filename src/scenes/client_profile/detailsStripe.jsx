@@ -1,54 +1,41 @@
-import React,{useState,useEffect} from 'react';
-import { Grid, Box, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Grid, Box, Typography, useMediaQuery } from '@mui/material';
+import dayjs from 'dayjs';
 
-const DetailsStripe = ({ theme , data }) => {
+const DetailsStripe = ({ theme, data }) => {
 
+  const query900 = useMediaQuery('(min-width: 900px)');
   const [list2Data, setList2Data] = useState([]);
-
-  useEffect(() => {
-    if (data) {
-      let birthdate = data?.data.BIRTHDATE;
-      let indexOfT = birthdate.indexOf('T');
-      if (indexOfT !== -1) {
-        birthdate = birthdate.substring(0, indexOfT);
-      }
-      let components = birthdate.split("-");
-      let formattedDate = `${components[2]}/${components[1]}/${components[0]}`;
-
-      
-      setList2Data([
-        data?.data.TYPECUST|| "__",
-        data?.data.TYPECUST2|| "__",
-        formattedDate|| "__",
-        data?.data.POSTE || "__",
-        data?.data.CIN|| "__"
-      ]);
-    }
-  }, [data]);
   const [list4Data, setList4Data] = useState([]);
- 
-  
+
   useEffect(() => {
     if (data) {
-      
+      console.log("data :", data);
+      setList2Data([
+        data?.data?.TYPECUST || "__",
+        data?.data?.TYPECUST2 || "__",
+        data?.data?.BIRTHDATE ? dayjs(data?.data?.BIRTHDATE).format('DD/MM/YYYY') : "__",
+        data?.data?.POSTE || "__",
+        data?.data?.CIN || "__"
+      ]);
+
       setList4Data([
-        data?.data.CUSTNO|| "__",
-        data?.data.PHONE|| "__",
-        data?.data.EMAIL|| "__",
-        data?.data.CITY|| "__",
-        data?.data.CIN|| "__"
+        data?.data?.CUSTNO || "__",
+        data?.data?.PHONE || "__",
+        data?.data?.EMAIL || "__",
+        data?.data?.CITY || "__",
+        data?.data?.CIN || "__"
       ]);
     }
   }, [data]);
- const list1Data = [
+
+  const list1Data = [
     "Type",
     "Catégorie",
     "Date de naissance",
     "Profession",
     "CIN"
   ];
- 
-
 
   const list3Data = [
     "IDC",
@@ -58,85 +45,67 @@ const DetailsStripe = ({ theme , data }) => {
     "Classe"
   ];
 
- 
-
-    return (
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{ borderRadius: '15px'}}>
-        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-          <Box
-            width="100%"
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            backgroundColor={theme.palette.secondary.light}
-            p="20px"
-            marginBottom="20px"
-            mt="40px"
-            style={{ borderRadius: '15px',boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }} 
-          >
-
-            <table style={{ width: '50%' ,marginLeft:"4%"}}>
-              <tbody>
-                {list1Data.map((item, index) => (
-                  <tr key={index}>
-                    <td>
-                      <Typography variant="h5" fontWeight="bold" color={theme.palette.background.default} style={{ overflowWrap: 'break-word' }}>
-                        {item}
-                      </Typography>
-                    </td>
-                    <td>
-                      <Typography variant="h5" color={theme.palette.background.default} style={{ overflowWrap: 'break-word' }}>
-                        {list2Data[index]}
-                      </Typography>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-    
-         
-            <Grid container item xs={6} sm={6} md={3} justifyContent="center" >
-              <div style={{ width: "75%", maxHeight: "20%", aspectRatio: "1 / 1" }}>
-                <img
-                  src={require('../../assets/client.jpg')}
-                  alt="Image Client"
-                  style={{
-                    borderRadius: "60%",
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-
-              </div>      
-            
-              <Typography variant="h5" fontWeight="bold" color={theme.palette.background.default} style={{ textAlign: 'center'  }}>  {`${data?.data.CIVILITY}${data?.data.FIRSTNAME} ${data?.data.NAME2}`}</Typography>
-              
+  return (
+    <Grid container spacing={2} sx={{
+      borderRadius: '10px',
+      width: '100%',
+      backgroundColor: theme.palette.secondary.light,
+      p: useMediaQuery('(min-width: 1024px)') ? '30px 80px' : '30px 15px',
+      borderRadius: '15px',
+      boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
+      mt: 0,
+      ml: 0
+    }}>
+      <Grid item xs={12} sm={12} md={4} order={query900 ? 0 : 1}>
+        {list1Data?.map((item, index) => (
+          <Grid item container spacing={4} key={index} width={"100%"} mt={'18px'} ml={0}>
+            <Grid xs={5}>
+              <Typography variant="h5" fontWeight="bold" color={theme.palette.background.default}>
+                {item}
+              </Typography>
             </Grid>
-    
-  
-            <table style={{ width: '50%' ,marginLeft:'11vh'}}>
-              <tbody>
-                {list3Data.map((item, index) => (
-                  <tr key={index}>
-                    <td>
-                      <Typography variant="h5" fontWeight="bold" color={theme.palette.background.default} style={{ overflowWrap: 'break-word' }}>
-                        {item}
-                      </Typography>
-                    </td>
-                    <td>
-                      <Typography variant="h5" color={theme.palette.background.default} style={{ overflowWrap: 'break-word' }}>
-                        {list4Data[index]}
-                      </Typography>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </Box>
-        </Grid>
+            <Grid xs={7}>
+              <Typography variant="h5" color={theme.palette.background.default}>
+                {list2Data[index]}
+              </Typography>
+            </Grid>
+          </Grid>
+        ))}
       </Grid>
-    );
-    
- }
+      <Grid item xs={12} sm={12} md={4} order={query900 ? 1 : 0}>
+        <Box display='flex' alignItems='center' justifyContent='center' flexDirection='column'>
+          <img
+            src={require('../../assets/profil.png')}
+            alt="Image Client"
+            style={{
+              width: "230px",
+              height: "230px",
+              objectFit: "contain",
+            }}
+          />
+          <Typography variant="h5" fontWeight="bold" color={theme.palette.background.default} style={{ textAlign: 'center' }}>
+            {`${data?.data?.CIVILITY}${data?.data?.FIRSTNAME} ${data?.data?.NAME2}`}
+          </Typography>
+        </Box>
+      </Grid>
+      <Grid item xs={12} sm={12} md={4} order={2}>
+        {list3Data?.map((item, index) => (
+          <Grid item container spacing={4} key={index} width={"100%"} mt={'18px'} ml={0}> 
+            <Grid xs={query900 ? 4 : 5}>
+              <Typography variant="h5" fontWeight="bold" color={theme.palette.background.default}>
+                {item}
+              </Typography>
+            </Grid>
+            <Grid xs={query900 ? 8 : 7}>
+              <Typography variant="h5" color={theme.palette.background.default} sx={{ overflowWrap: 'anywhere' }}>
+                {list4Data[index]}
+              </Typography>
+            </Grid>
+          </Grid>
+        ))}
+      </Grid>
+    </Grid>
+  );
+}
+
 export default DetailsStripe;

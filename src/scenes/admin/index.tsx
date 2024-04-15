@@ -39,6 +39,7 @@ import {
   gridSortedRowIdsSelector,
   gridExpandedSortedRowIdsSelector,
   useGridApiContext,
+  frFR,
 
 } from '@mui/x-data-grid';
 import { useTheme } from "@mui/material";
@@ -364,15 +365,15 @@ const useFakeMutation = () => {
 
 
   const columns: GridColDef[] = [
-    { field: 'username', headerName: 'Utilisateur',type: 'string', width: 180, editable: true },
-    { field: 'pwd', headerName: 'Mot de passe',type: 'string', width: 180, editable: true },
+    { field: 'username', headerName: 'Utilisateur',type: 'string', flex: 1, editable: true },
+    { field: 'pwd', headerName: 'Mot de passe',type: 'string', flex: 1, editable: true },
    
     
     {
       field: 'lastLogin',
       headerName: 'dérniere connexion',
       type: 'string',
-      width: 180,
+      flex: 1,
       editable: false,
       valueFormatter: ({ value }) => dateTimeFormatter(value)
 
@@ -381,7 +382,7 @@ const useFakeMutation = () => {
       field: 'creationDate',
       headerName: 'Date de création',
       type: 'string',
-      width: 180,
+      flex: 1,
       editable: false,
       valueFormatter: ({ value }) => dateTimeFormatter(value)
 
@@ -389,7 +390,7 @@ const useFakeMutation = () => {
     {
       field: 'active',
       headerName: 'Active',
-      width: 120,
+      flex: 1,
       renderCell: (params) => {
         const isInEditMode = rowModesModel[params.id]?.mode === GridRowModes.Edit;
     
@@ -427,7 +428,7 @@ const useFakeMutation = () => {
       field: 'actions',
       type: 'actions',
       headerName: 'Actions',
-      width: 100,
+      flex: 1,
       cellClassName: 'actions',
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
@@ -526,16 +527,6 @@ const useFakeMutation = () => {
           {renderDeleteConfirmationDialog()}
           {renderConfirmDialog()}
           <DataGrid
-            localeText={{
-              toolbarColumns: "Colonnes",
-              toolbarFilters: "Filtrer",
-              toolbarDensity: "Densité",
-              MuiTablePagination: {
-                labelDisplayedRows: ({ from, to, count }) =>
-                  `${from} - ${to} de ${count}`,
-                
-              },
-            }}
             rows={rows}
             columns={columns}
             editMode="row"
@@ -543,6 +534,7 @@ const useFakeMutation = () => {
             onRowModesModelChange={handleRowModesModelChange}
             onRowEditStop={handleRowEditStop}
             processRowUpdate={processRowUpdate}
+            localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
             slots={{
               toolbar: EditToolbar,
             }}
@@ -550,60 +542,21 @@ const useFakeMutation = () => {
               toolbar: { setRows, setRowModesModel },
             }}
             sx={{
-              "& .MuiDataGrid-root": {
-                border: "none",
+              '& .MuiDataGrid-root': {
+                border: 'none',
               },
-              "& .MuiDataGrid-cell": {
-                borderBottom: "none",
+              '& .MuiDataGrid-cell': {
+                borderBottom: 'none',
               },
-              "& .MuiDataGrid-columnHeaders": {
-                backgroundColor: theme.palette.background.alt,
-                borderBottom: "none",
+              '& .MuiDataGrid-columnHeaders': {
+                borderTop: `1px solid ${theme.palette.primary.light}`,
               },
-              "& .MuiDataGrid-virtualScroller": {
-                backgroundColor: theme.palette.primary.light,
-              },
-              "& .MuiDataGrid-footerContainer": {
-                backgroundColor: theme.palette.background.alt,
-                color: theme.palette.secondary[100],
-                borderTop: "none",
-              },
-              "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+              '& .MuiDataGrid-toolbarContainer .MuiButton-text': {
                 color: `${theme.palette.secondary[200]} !important`,
-              },
-              '& .MuiDataGrid-selectedRowCount': {
-                visibility: 'hidden',
-                padding: 0, 
-                margin: 0,
-              },
-              '& .MuiDataGrid-selectedRowCount::before': {
-                content: '""',
-              },
-              '& .MuiDataGrid-selectedRowCount::after': {
-                content: '"1 ligne sélectionnée"', 
-                visibility: 'visible', 
-                display: 'inline',
-                padding: 0, 
-                margin: "-9vh",
-              },
-              '& .MuiTablePagination-selectLabel': {
-                visibility: 'hidden',
-                padding: 0, 
-                margin: 0, 
-              },
-              '& .MuiTablePagination-selectLabel::before': {
-                content: '""',
-              },
-              '& .MuiTablePagination-selectLabel::after': {
-                content: '"Lignes par page"', 
-                visibility: 'visible', 
-                display: 'inline',
-                padding: 0, 
-                margin: 0, 
               },
               '& .MuiDataGrid-columnHeaderTitle': {
                 fontWeight: 'bold',
-            },
+              },
             }}
           />
           {!!snackbar && (

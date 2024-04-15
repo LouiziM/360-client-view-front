@@ -6,14 +6,17 @@ import { Menu as MenuIcon, Search } from "@mui/icons-material";
 import { logOut } from "../features/auth/authSlice";
 import { useTheme } from "@mui/system";
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from "react-router-dom";
 
 
 const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(logOut());
+    navigate('/');
   };
 
   return (

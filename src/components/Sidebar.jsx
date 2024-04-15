@@ -21,18 +21,17 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import MapIcon from '@mui/icons-material/Map';
 
 const navItems = [
-  
   {
     text: "Admin",
-    icon: <AdminPanelSettingsOutlined />,
+    icon: <AdminPanelSettingsOutlined sx={{ color: "#FFF" }} />,
   },
   {
     text: "Clients",
-    icon: <GroupsIcon/>
+    icon: <GroupsIcon sx={{ color: "#FFF" }} />
   },
   {
     text: "Map",
-    icon: <MapIcon/>
+    icon: <MapIcon sx={{ color: "#FFF" }} />
   },
 ];
 
@@ -62,7 +61,7 @@ const Sidebar = ({
           sx={{
             width: drawerWidth,
             "& .MuiDrawer-paper": {
-           
+
               backgroundColor: theme.palette.secondary[700],
               boxSixing: "border-box",
               borderWidth: isNonMobile ? 0 : "2px",
@@ -71,22 +70,22 @@ const Sidebar = ({
           }}
         >
           <Box width="100%">
-         
+
 
             <Box
-            mt={7}
-            mb={3}
-                component="img"
-                alt="profile"
-                src={logoImage}
-                height="110px"
-                width="190px"
-                borderRadius="20%"
-                sx={{
-                  objectFit: "cover",
-                  marginLeft: "10%"
-                }}
-              />
+              mt={7}
+              mb={3}
+              component="img"
+              alt="profile"
+              src={logoImage}
+              height="110px"
+              width="190px"
+              borderRadius="10px"
+              sx={{
+                objectFit: "cover",
+                marginLeft: "10%"
+              }}
+            />
 
             <List>
               {navItems.map(({ text, icon }) => {
@@ -107,28 +106,26 @@ const Sidebar = ({
                         setActive(lcText);
                       }}
                       sx={{
-                        backgroundColor:
-                          active === lcText
-                            ? theme.palette.secondary[300]
-                            : "transparent",
-                        color:
-                          active === lcText
-                            ? theme.palette.primary[600]
-                            : theme.palette.secondary[100],
+                        color: "#FFF"
                       }}
                     >
                       <ListItemIcon
                         sx={{
                           ml: "2rem",
-                          color:
-                            active === lcText
-                              ? theme.palette.primary[600]
-                              : theme.palette.secondary[200],
+                          color: "#FFF"
+
                         }}
                       >
                         {icon}
                       </ListItemIcon>
-                      <ListItemText primary={text} />
+                      <ListItemText
+                        primary={text}
+                        sx={{
+                          "& span": {
+                            fontWeight: active === lcText && "bold"
+                          }
+                        }}
+                      />
                       {active === lcText && (
                         <ChevronRightOutlined sx={{ ml: "auto" }} />
                       )}
@@ -139,7 +136,7 @@ const Sidebar = ({
             </List>
           </Box>
 
-  
+
         </Drawer>
       )}
     </Box>

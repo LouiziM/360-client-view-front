@@ -8,7 +8,7 @@ import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
 
 const ClientSatisfaction = ({ theme }) => {
-  const satisfaction = 5; 
+  const satisfaction = 2; 
   const surveys = 10; 
   const complaints = 2; 
 
@@ -41,25 +41,24 @@ const ClientSatisfaction = ({ theme }) => {
   };
 
   return (
-    <Grid container xs={6.5} sm={24} md={24} lg={6.5} xl={6.5} style={{ borderRadius: '15px' }}>
+    <Grid item xs={12} sm={12} md={4} lg={4} xl={4} sx={{ borderRadius: '15px', display: "flex" }}>
       <Box
         width="100%"
-        marginBottom="20px"
-        mt="20px"
+        height="100%"
         p="20px"
         style={{ borderRadius: '15px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
-        backgroundColor={theme.palette.primary.main}
+        backgroundColor={theme.palette.primary.white}
       >
         <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} gutterBottom>
           Satisfaction
         </Typography>
-        <hr style={{ border: '1px solid #ccc', marginBottom: "20px" }} />
-        <Grid container direction="column" alignItems="center">
-          <Box >{renderSatisfactionIcon()}</Box>
-          <Box display="flex" marginBottom="10px">
+        <hr style={{ border: `1px solid ${theme.palette.secondary.light}`, marginBottom: "20px" }} />
+        <Grid container direction="column" height={"88%"}>
+          <Box textAlign={"center"}>{renderSatisfactionIcon()}</Box>
+          <Box display="flex" marginBottom="10px" marginTop="30px" justifyContent={"center"}>
             {renderStars()}
           </Box>
-          <Box display="flex">
+          <Box marginTop={"auto"} display="flex" justifyContent={"space-between"}>
             <Typography textAlign="center" fontWeight="bold" variant="h5" color={theme.palette.secondary.light}>Enquêtes: {surveys}</Typography>
             <Typography textAlign="center" fontWeight="bold" variant="h5" marginLeft="20px" color={theme.palette.secondary.light}>Réclamations: {complaints}</Typography>
           </Box>

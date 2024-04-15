@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { alpha, styled } from '@mui/material/styles';
-import { DataGrid, gridClasses, GridLogicOperator, GridToolbarQuickFilter } from '@mui/x-data-grid';
+import { DataGrid, frFR, gridClasses, GridLogicOperator, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import { Grid, Box, Typography } from '@mui/material';
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
 
@@ -10,24 +10,24 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   [`& .${gridClasses.row}.even`]: {
     backgroundColor: theme.palette.secondary.faint,
     '&:hover, &.Mui-hovered': {
-      backgroundColor: alpha(theme.palette.secondary.light, ODD_OPACITY),
+      backgroundColor: alpha(theme.palette.primary.faint, ODD_OPACITY),
       '@media (hover: none)': {
         backgroundColor: 'transparent',
       },
     },
     '&.Mui-selected': {
       backgroundColor: alpha(
-        theme.palette.secondary.light,
+        theme.palette.primary.faint,
         ODD_OPACITY,
       ),
       '&:hover, &.Mui-hovered': {
         backgroundColor: alpha(
-          theme.palette.secondary.light,
+          theme.palette.primary.faint,
           ODD_OPACITY
         ),
         '@media (hover: none)': {
           backgroundColor: alpha(
-            theme.palette.secondary.light,
+            theme.palette.primary.faint,
             ODD_OPACITY
           ),
         },
@@ -37,12 +37,12 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   [`& .${gridClasses.row}.odd`]: {
     '&.Mui-selected': {
       backgroundColor: alpha(
-        theme.palette.primary.dark,
+        theme.palette.primary.faint,
         ODD_OPACITY,
       ),
     },
     '&:hover, &.Mui-hovered': {
-      backgroundColor: alpha(theme.palette.primary.dark, ODD_OPACITY),
+      backgroundColor: alpha(theme.palette.primary.faint, ODD_OPACITY),
       '@media (hover: none)': {
         backgroundColor: 'transparent',
       },
@@ -82,7 +82,7 @@ const MarketingCampaigns = ({ theme }) => {
 
   const handleLegendHover = (color, index) => {
     setHoveredIndex(index);
-    const newColors = defaultDataColors.map((c, i) => (i === index ? color : 'transparent'));
+    const newColors = defaultDataColors?.map((c, i) => (i === index ? color : 'transparent'));
     setDataColors(newColors);
   };
 
@@ -96,10 +96,10 @@ const MarketingCampaigns = ({ theme }) => {
       onMouseLeave={() => resetColors()}
       display="flex"
       flexDirection="column"
-      width="16vw"
-      style={{ transform: 'translateY(-15vh)' }}
+      position="absolute"
+      top="340px"
     >
-      {data.map((item, index) => (
+      {data?.map((item, index) => (
         <LegendItem
           key={index}
           onMouseEnter={() => handleLegendHover(defaultDataColors[index], index)}
@@ -113,7 +113,7 @@ const MarketingCampaigns = ({ theme }) => {
             marginRight="5px"
             marginBottom="2px"
           />
-         <Typography variant="body2">
+          <Typography variant="body2">
             {item.id} <strong>{item.data[0].y}%</strong>
           </Typography>
 
@@ -156,24 +156,23 @@ const MarketingCampaigns = ({ theme }) => {
           dominantBaseline="central"
           style={{
             fontSize: 20,
-            fontWeight:"bold"
+            fontWeight: "bold"
           }}
         >
-         {value}%
+          {value}%
         </text>
       );
     }
     return null;
   };
   return (
-    <Grid container xs={17.5} sm={24} md={24} lg={17.5} xl={17.5} style={{ borderRadius: '15px', position: 'relative' }}>
+    <Grid item xs={12} sm={12} md={8} lg={8} xl={8} sx={{ borderRadius: '15px', position: 'relative', display: "flex" }}>
       <Box
         width="100%"
-        marginBottom="20px"
-        mt="20px"
+        height="100%"
         p="20px"
         style={{ borderRadius: '15px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
-        backgroundColor={theme.palette.primary.main}
+        backgroundColor={theme.palette.primary.white}
         display="flex"
         flexDirection="column"
         position="relative"
@@ -181,86 +180,86 @@ const MarketingCampaigns = ({ theme }) => {
         <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} >
           Campagnes marketing
         </Typography>
-        <hr style={{ border: '1px solid #ccc', width: '100%', marginBottom: "20px" }} />
+        <hr style={{ border: `1px solid ${theme.palette.secondary.light}`, width: '100%', marginBottom: "20px" }} />
 
-        <Box display="flex"       onMouseLeave={() => resetColors()}
->
-          <Box
-            justifyContent={"center"}
-            style={{
-              flex: '5 5 0',
-              transform: 'translateX(4vw)'
-            }}
-          >
-            <ResponsiveRadialBar
-              data={data}
-              innerRadius={0.3}
-              padding={0.35}
-              cornerRadius={1.5}
-              colors={dataColors}
-              borderColor={{
-                from: 'color',
-                modifiers: [['darker', '1']]
-              }}
-              enableTracks={false}
-              circularAxisOuter={null}
-              labelsSkipAngle={0}
-              labelsRadiusOffset={0}
-              width={220}
-              height={260}
-              radialAxisStart={null}
-              isInteractive={false}
-              margin={{ bottom: 40 }}
-              cornerRadius={16}
-              labelsTextColor={{ theme: 'grid.line.stroke' }}
-              motionConfig={{
-                mass: 6,
-                tension: 320,
-                friction: 114,
-                clamp: false,
-                precision: 0.01,
-                velocity: 0.05
-              }}
-              transitionMode="startAngle"
-              layers={['grid', 'tracks', 'bars', 'labels', Metric]}
-            />
-            <Legend/>
-          </Box>
+        <Box onMouseLeave={() => resetColors()}>
+          <Grid container spacing={2} position={"relative"}>
+            <Grid item xs={12} sm={12} md={4}>
+              <ResponsiveRadialBar
+                data={data}
+                innerRadius={0.3}
+                padding={0.35}
+                cornerRadius={1.5}
+                colors={dataColors}
+                borderColor={{
+                  from: 'color',
+                  modifiers: [['darker', '1']]
+                }}
+                enableTracks={false}
+                circularAxisOuter={null}
+                labelsSkipAngle={0}
+                labelsRadiusOffset={0}
+                // width={300}
+                height={300}
+                radialAxisStart={null}
+                isInteractive={false}
+                // margin={{ bottom: 40 }}
+                cornerRadius={16}
+                labelsTextColor={{ theme: 'grid.line.stroke' }}
+                motionConfig={{
+                  mass: 6,
+                  tension: 320,
+                  friction: 114,
+                  clamp: false,
+                  precision: 0.01,
+                  velocity: 0.05
+                }}
+                transitionMode="startAngle"
+                layers={['grid', 'tracks', 'bars', 'labels', Metric]}
+              />
+              <Legend />
+            </Grid>
+            <Grid item xs={12} sm={12} md={8} mt={{ xl:0, lg: 0, md: 0, sm: "90px", xs: "90px" }}>
+              <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} marginBottom={"20px"} textAlign={"center"}>
+                Historique de participation aux campagnes
+              </Typography>
+              <StripedDataGrid
+                rows={rows}
+                columns={columns}
+                getRowClassName={(params) =>
+                  params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
+                }
+                sx={{
+                  '&, [class^=MuiDataGrid]': {
+                    borderBottom: 'none',
+                    borderRight: 'none',
+                    borderLeft: 'none',
+                    borderTop: 'none',
 
-          <Box style={{ flex: '6 6 0' }}>
-            <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} gutterBottom>
-              Historique de participation aux campagnes
-            </Typography>
-            <StripedDataGrid
-              rows={rows}
-              columns={columns}
-              getRowClassName={(params) =>
-                params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
-              }
-              sx={{ 
-                '&, [class^=MuiDataGrid]': { 
-                    borderBottom: 'none', 
-                    borderRight: 'none', 
-                    borderLeft: 'none', 
-                    borderTop: 'none', 
-                    maxHeight: 'calc(100vh - 300px)',
-                   
-                    '& .MuiDataGrid-columnHeaderTitle': {
-                        fontWeight: 'bold',
+                    '& .MuiDataGrid-main': {
+                      flexGrow: 0
                     },
-                },
-            }}              
-                initialState={{
-                filter: {
-                  filterModel: {
-                    items: [],
-                    quickFilterLogicOperator: GridLogicOperator.Or,
+                    '& .MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold',
+                    },
                   },
-                },
-              }}
-              slots={{ toolbar: QuickSearchToolbar }}
-            />
-          </Box>
+                }}
+                initialState={{
+                  filter: {
+                    filterModel: {
+                      items: [],
+                      quickFilterLogicOperator: GridLogicOperator.Or,
+                    },
+                  },
+                  pagination: {
+                    paginationModel: { page: 0, pageSize: 5 },
+                  },
+                }}
+                slots={{ toolbar: QuickSearchToolbar }}
+                localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
+              />
+            </Grid>
+          </Grid>
         </Box>
       </Box>
     </Grid>
@@ -281,7 +280,7 @@ function QuickSearchToolbar() {
       borderColor={"#004BAB"}
       p="0rem 0.5rem"
       width="100%"
-      height="70px"
+      height="50px"
     >
       <GridToolbarQuickFilter
         quickFilterParser={(searchInput) =>
@@ -292,8 +291,13 @@ function QuickSearchToolbar() {
         }
         sx={{
           width: "100%",
-          pt: 1.5,
           pb: 0,
+          "& .MuiInputBase-root.MuiInput-root:before": {
+            display: 'none'
+          },
+          "& .MuiInputBase-root.MuiInput-root:after": {
+            display: 'none'
+          }
         }}
       />
     </Box>
