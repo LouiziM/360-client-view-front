@@ -5,7 +5,7 @@ export const tokensLight = {
     10: "#f6f6f6", 
     50: "#f0f0f0", 
     100: "#e0e0e0",
-    200: "#c2c2c2",
+    200: "#d2d2d2",
     300: "#a3a3a3",
     400: "#858585",
     500: "#666666",
@@ -51,8 +51,10 @@ export const themeSettings = () => {
       mode: "light",
       primary: {
         ...tokensLight.primary,
+        white: tokensLight.grey[0],
         main: tokensLight.grey[50],
         light: tokensLight.grey[100],
+        faint: tokensLight.grey[200],
         dark: tokensLight.grey[700],
       },
       secondary: {

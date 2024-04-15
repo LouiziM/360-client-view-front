@@ -6,6 +6,7 @@ import {
   ExpandCircleDown,
 } from "@mui/icons-material";
 import {
+  Grid,
   Box,
   Button,
   useTheme,
@@ -26,10 +27,6 @@ const ClientProfile = () => {
   const location = useLocation();
   const { state } = location;
 
-
-
-
-
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -38,9 +35,9 @@ const ClientProfile = () => {
   };
 
   return (
-    <Box m="1.5rem 2.5rem" position="relative">
+    <Box p="1.5rem 2.5rem" position="relative" bgcolor={"#F2F2F2"}>
       <FlexBetween>
-        <Header title="Profil client"/>
+        <Header title="Profil client" />
 
         <Box>
           <Button
@@ -50,6 +47,9 @@ const ClientProfile = () => {
               fontSize: "14px",
               fontWeight: "bold",
               padding: "10px 20px",
+              "&:hover": {
+                backgroundColor: theme.palette.secondary.light
+              }
             }}
           >
             <DownloadOutlined sx={{ mr: "10px" }} />
@@ -58,37 +58,46 @@ const ClientProfile = () => {
         </Box>
       </FlexBetween>
 
-        
-   
-          {/* Render components when isLoading is false */}
-          <DetailsStripe theme={theme} data={state} />
+      {/* Render components when isLoading is false */}
+      <Box mt={"24px"}>
+        <DetailsStripe theme={theme} data={state} />
+      </Box>
 
-          <Box display="flex" flexDirection="row" gap={5}   >
-            <DataCompletion theme={theme} client={state}/>
-            <FinancialData theme={theme} />
-          </Box>
-          <Box display="flex" flexDirection="row" gap={5}   >
-            <ClientPark theme={theme} />
-            <SavTable theme={theme} />
-          </Box>
+      <Box mt={"24px"}>
+        <Grid container spacing={3}>
+          <DataCompletion theme={theme} client={state} />
+          <FinancialData theme={theme} />
+        </Grid>
+      </Box>
 
-          <Box display="flex" flexDirection="row" gap={5}   >
-            <MarketingCampaigns theme={theme} />
-            <ClientSatisfaction theme={theme} />
-          </Box>
+      <Box mt={"24px"}>
+        <Grid container spacing={3}>
+          <ClientPark theme={theme} />
+          <SavTable theme={theme} />
+        </Grid>
+      </Box>
 
-          <ExpandCircleDown
-            sx={{
-              position: "fixed",
-              bottom: "10px",
-              right: "10px",
-              transform: "rotate(180deg)",
-              color: theme.palette.secondary.light,
-              fontSize: "4rem",
-              cursor: "pointer",
-            }}
-            onClick={scrollToTop}
-          />
+      <Box mt={"24px"}>
+        <Grid container spacing={3}>
+          <MarketingCampaigns theme={theme} />
+          <ClientSatisfaction theme={theme} />
+        </Grid>
+      </Box>
+
+      <Box onClick={scrollToTop}>
+        <ExpandCircleDown
+          sx={{
+            position: "fixed",
+            bottom: "10px",
+            right: "10px",
+            transform: "rotate(180deg)",
+            color: theme.palette.secondary.light,
+            fontSize: "4rem",
+            cursor: "pointer",
+          }}
+        />
+      </Box>
+
     </Box>
   );
 };

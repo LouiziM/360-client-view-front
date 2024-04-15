@@ -3,15 +3,16 @@ import Box from '@mui/material/Box';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Grid, Button } from '@mui/material';
 import { useGetAllClientsQuery } from '../../features/state/clientSlice';
-import { GridToolbarContainer, gridClasses, GridToolbarDensitySelector, GridToolbarColumnsButton, GridToolbarFilterButton,GridLogicOperator } from '@mui/x-data-grid';
-import { useGridApiContext,GridToolbarQuickFilter, GridCsvExportOptions, useGridApiEventHandler, GridCsvGetRowsToExportParams, gridPaginatedVisibleSortedGridRowIdsSelector, gridSortedRowIdsSelector, gridExpandedSortedRowIdsSelector } from '@mui/x-data-grid'
+import { GridToolbarContainer, gridClasses, GridToolbarDensitySelector, GridToolbarColumnsButton, GridToolbarFilterButton, GridLogicOperator } from '@mui/x-data-grid';
+import { useGridApiContext, GridToolbarQuickFilter, GridCsvExportOptions, useGridApiEventHandler, GridCsvGetRowsToExportParams, gridPaginatedVisibleSortedGridRowIdsSelector, gridSortedRowIdsSelector, gridExpandedSortedRowIdsSelector } from '@mui/x-data-grid'
 import { createSvgIcon } from '@mui/material/utils';
 import { useTheme } from "@mui/material";
 import { alpha, styled } from '@mui/material/styles';
 import ClientCard from './clientCard';
 import { useState } from 'react';
 import Drawer from '@mui/material/Drawer';
-import CircularProgress from '@mui/material/CircularProgress'; 
+import CircularProgress from '@mui/material/CircularProgress';
+import { frFR } from "@mui/x-data-grid/locales";
 
 
 const ODD_OPACITY = 0.4;
@@ -20,45 +21,42 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   [`& .${gridClasses.row}.even`]: {
     backgroundColor: theme.palette.secondary.faint,
     '&:hover, &.Mui-hovered': {
-      backgroundColor: alpha(theme.palette.secondary.light, ODD_OPACITY),
+      backgroundColor: alpha(theme.palette.primary.faint, ODD_OPACITY),
       '@media (hover: none)': {
         backgroundColor: 'transparent',
       },
     },
     '&.Mui-selected': {
       backgroundColor: alpha(
-        theme.palette.secondary.light,
+        theme.palette.primary.faint,
         ODD_OPACITY,
       ),
       '&:hover, &.Mui-hovered': {
         backgroundColor: alpha(
-          theme.palette.secondary.light,
+          theme.palette.primary.faint,
           ODD_OPACITY
         ),
         // Reset on touch devices, it doesn't add specificity
         '@media (hover: none)': {
           backgroundColor: alpha(
-            theme.palette.secondary.light,
+            theme.palette.primary.faint,
             ODD_OPACITY
           ),
         },
       },
     },
   },
-  [`& .${gridClasses.row}.odd`]: { 
+  [`& .${gridClasses.row}.odd`]: {
     '&.Mui-selected': {
-      backgroundColor: alpha(
-        theme.palette.primary.dark,
-        ODD_OPACITY,
-      ),
+      backgroundColor: alpha(theme.palette.primary.faint, ODD_OPACITY)
     },
     '&:hover, &.Mui-hovered': {
-      backgroundColor: alpha(theme.palette.primary.dark, ODD_OPACITY),
+      backgroundColor: alpha(theme.palette.primary.faint, ODD_OPACITY),
       '@media (hover: none)': {
         backgroundColor: 'transparent',
-      },  
+      },
     }
-  }, 
+  },
 }));
 
 
@@ -106,27 +104,24 @@ const Clients = () => {
   };
 
   const columns: GridColDef[] = [
-    { field: 'CUSTNO', headerName: 'Nb', type: 'number', width: 60 },
-    { field: 'NAME2', headerName: 'Nom', type: 'string', width: 110 },
-    { field: 'FIRSTNAME', headerName: 'Prénom', type: 'string', width: 110 },
-  
-   
-    { field: 'CITY', headerName: 'Cité', type: 'string', width: 120 },
-    { field: 'COUNTRY', headerName: 'Pays', type: 'string', width: 100 },
+    { field: 'CUSTNO', headerName: 'Nb', type: 'number', width: 80 },
+    { field: 'NAME2', headerName: 'Nom', type: 'string', width: 150 },
+    { field: 'FIRSTNAME', headerName: 'Prénom', type: 'string', width: 150 },
+    { field: 'CITY', headerName: 'Ville', type: 'string', width: 150 },
+    { field: 'COUNTRY', headerName: 'Pays', type: 'string', width: 120 },
     {
       field: 'DATECRE',
       headerName: 'Crée le',
       type: 'date',
-      width: 90,
+      width: 110,
       valueGetter: (params) => new Date(params.value)
-    }   
-,    
-    { field: 'PHONE', headerName: 'Tel', type: 'string', width: 120 },
-    { field: 'ZIP', headerName: 'ZIP', type: 'number', width: 70 },
-    { field: 'ADDRESS', headerName: 'Adresse', type: 'string', width: 240 },
+    },
+    { field: 'PHONE', headerName: 'Tel', type: 'string', width: 150 },
+    { field: 'ZIP', headerName: 'ZIP', type: 'number', width: 90 },
+    { field: 'ADDRESS', headerName: 'Adresse', type: 'string', flex: 1 },
   ];
-
   
+
   const handleRowClick: GridEventListener<'rowClick'> = (params) => {
     const clickedRow = clients.find(client => client.CUSTNO === params.row.CUSTNO);
     setSelectedRow(clickedRow || null);
@@ -139,13 +134,11 @@ const Clients = () => {
     <>
       {clients.length > 0 ? (
         <Grid container p={5}>
-          <Grid item lg={12} sx={{ height: '74vh' }}>
+          <Grid item lg={12} width={"100%"}>
             <StripedDataGrid
               theme={theme}
               rows={clients}
               columns={columns}
-              pageSize={5}
-              rowsPerPageOptions={[5, 10, 20]}
               components={{ Toolbar: EditToolbar }}
               getRowClassName={(params) =>
                 params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
@@ -158,19 +151,12 @@ const Clients = () => {
                     quickFilterLogicOperator: GridLogicOperator.Or,
                   },
                 },
+                pagination: {
+                  paginationModel: { page: 0, pageSize: 10 },
+              },
               }}
-              localeText={{
-                toolbarColumns: 'Colonnes',
-                toolbarFilters: 'Filtrer',
-                toolbarDensity: 'Densité',
-                MuiTablePagination: {
-                  labelDisplayedRows: ({ from, to, count }) =>
-                    `${from} - ${to} de ${count}`,
-                  
-                },
-
-              }}
-              
+              pageSizeOptions={[10, 25, 100]}
+              localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
               sx={{
                 '& .MuiDataGrid-root': {
                   border: 'none',
@@ -179,53 +165,14 @@ const Clients = () => {
                   borderBottom: 'none',
                 },
                 '& .MuiDataGrid-columnHeaders': {
-                  backgroundColor: theme.palette.background.alt,
-                  borderBottom: 'none',
-                },
-                '& .MuiDataGrid-virtualScroller': {
-                  backgroundColor: theme.palette.primary.light,
-                },
-                '& .MuiDataGrid-footerContainer': {
-                  backgroundColor: theme.palette.background.alt,
-                  color: theme.palette.secondary[100],
-                  borderTop: 'none',
+                  borderTop: `1px solid ${theme.palette.primary.light}`,
                 },
                 '& .MuiDataGrid-toolbarContainer .MuiButton-text': {
                   color: `${theme.palette.secondary[200]} !important`,
                 },
-                '& .MuiDataGrid-selectedRowCount': {
-                  visibility: 'hidden',
-                  padding: 0, 
-                  margin: 0,
-                },
-                '& .MuiDataGrid-selectedRowCount::before': {
-                  content: '""',
-                },
-                '& .MuiDataGrid-selectedRowCount::after': {
-                  content: '"1 ligne sélectionnée"', 
-                  visibility: 'visible', 
-                  display: 'inline',
-                  padding: 0, 
-                  margin: "-9vh",
-                },
-                '& .MuiTablePagination-selectLabel': {
-                  visibility: 'hidden',
-                  padding: 0, 
-                  margin: 0, 
-                },
-                '& .MuiTablePagination-selectLabel::before': {
-                  content: '""',
-                },
-                '& .MuiTablePagination-selectLabel::after': {
-                  content: '"Lignes par page"', 
-                  visibility: 'visible', 
-                  display: 'inline',
-                  padding: 0, 
-                  margin: 0, 
-                },
                 '& .MuiDataGrid-columnHeaderTitle': {
                   fontWeight: 'bold',
-              },
+                },
               }}
             />
 
@@ -259,13 +206,13 @@ const Clients = () => {
           alignItems="center"
           height="500px"
         >
-          <CircularProgress sx={{color:theme.palette.secondary.light}} />
+          <CircularProgress sx={{ color: theme.palette.secondary.light }} />
         </Box>
       )}
     </>
   );
-  
-};  
+
+};
 
 export default Clients;
 
@@ -304,31 +251,33 @@ function EditToolbar(props: EditToolbarProps) {
 
   return (
     <GridToolbarContainer>
-        <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="space-between"
-      backgroundColor={"#ffffff"}
-      borderRadius="9px"
-      border="1px solid"
-      borderColor={"#004BAB"}  
-      p="0rem 0.5rem"
-      width="100%"
-      height="6.5vh"
-    >
-      <GridToolbarQuickFilter 
-        quickFilterParser={(searchInput) =>
-          searchInput
-            .split(',')
-            .map((value) => value.trim())
-            .filter((value) => value !== '')
-        }
-        sx={{width:"100%",
-        pt:1.5,
-        pb: 0,}}
-      />
-     
-    </Box>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        backgroundColor={"#ffffff"}
+        borderRadius="9px"
+        // border="1px solid"
+        // borderColor={"#004BAB"}
+        p="0rem 0.5rem"
+        width="100%"
+        // height="6.5vh"
+      >
+        <GridToolbarQuickFilter
+          quickFilterParser={(searchInput) =>
+            searchInput
+              .split(',')
+              .map((value) => value.trim())
+              .filter((value) => value !== '')
+          }
+          sx={{
+            width: "100%",
+            pt: 1.5,
+            pb: 0,
+          }}
+        />
+
+      </Box>
       <GridToolbarDensitySelector />
       <GridToolbarColumnsButton />
       <GridToolbarFilterButton />

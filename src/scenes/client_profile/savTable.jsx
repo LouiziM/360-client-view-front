@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { alpha, styled } from '@mui/material/styles';
-import { DataGrid, gridClasses, GridLogicOperator, GridToolbarQuickFilter } from '@mui/x-data-grid';
+import { DataGrid, frFR, gridClasses, GridLogicOperator, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { Grid, Box, Typography } from '@mui/material';
@@ -11,45 +11,45 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   [`& .${gridClasses.row}.even`]: {
     backgroundColor: theme.palette.secondary.faint,
     '&:hover, &.Mui-hovered': {
-      backgroundColor: alpha(theme.palette.secondary.light, ODD_OPACITY),
+      backgroundColor: alpha(theme.palette.primary.faint, ODD_OPACITY),
       '@media (hover: none)': {
         backgroundColor: 'transparent',
       },
     },
     '&.Mui-selected': {
       backgroundColor: alpha(
-        theme.palette.secondary.light,
+        theme.palette.primary.faint,
         ODD_OPACITY,
       ),
       '&:hover, &.Mui-hovered': {
         backgroundColor: alpha(
-          theme.palette.secondary.light,
+          theme.palette.primary.faint,
           ODD_OPACITY
         ),
         // Reset on touch devices, it doesn't add specificity
         '@media (hover: none)': {
           backgroundColor: alpha(
-            theme.palette.secondary.light,
+            theme.palette.primary.faint,
             ODD_OPACITY
           ),
         },
       },
     },
   },
-  [`& .${gridClasses.row}.odd`]: { 
+  [`& .${gridClasses.row}.odd`]: {
     '&.Mui-selected': {
       backgroundColor: alpha(
-        theme.palette.primary.dark,
+        theme.palette.primary.faint,
         ODD_OPACITY,
       ),
     },
     '&:hover, &.Mui-hovered': {
-      backgroundColor: alpha(theme.palette.primary.dark, ODD_OPACITY),
+      backgroundColor: alpha(theme.palette.primary.faint, ODD_OPACITY),
       '@media (hover: none)': {
         backgroundColor: 'transparent',
-      },  
+      },
     }
-  }, 
+  },
 }));
 
 function QuickSearchToolbar() {
@@ -61,10 +61,10 @@ function QuickSearchToolbar() {
       backgroundColor={"#ffffff"}
       borderRadius="9px"
       border="1px solid"
-      borderColor={"#004BAB"}  
+      borderColor={"#004BAB"}
       p="0rem 0.5rem"
       width="100%"
-      height="70px"
+      height="50px"
     >
       <GridToolbarQuickFilter
         quickFilterParser={(searchInput) =>
@@ -73,11 +73,18 @@ function QuickSearchToolbar() {
             .map((value) => value.trim())
             .filter((value) => value !== '')
         }
-        sx={{width:"100%",
-        pt:1.5,
-        pb: 0,}}
+        sx={{
+          width: "100%",
+          pb: 0,
+          "& .MuiInputBase-root.MuiInput-root:before": {
+            display: 'none'
+          },
+          "& .MuiInputBase-root.MuiInput-root:after": {
+            display: 'none'
+          }
+        }}
       />
-     
+
     </Box>
   );
 }
@@ -88,10 +95,10 @@ export default function SavTable({ theme }) {
     () => {
       const data = [];
       for (let i = 1; i <= 50; i++) {
-        data.push({ 
-          id: i, 
-          date: `2024-03-${15 + i % 30}`, 
-          amount: 100 + i * 10, 
+        data.push({
+          id: i,
+          date: `2024-03-${15 + i % 30}`,
+          amount: 100 + i * 10,
           satisfaction: i % 2 === 0,
           site: `Site ${i % 3 + 1}`
         });
@@ -102,12 +109,12 @@ export default function SavTable({ theme }) {
   );
 
   const columns = [
-    { field: 'date', headerName: 'Date de visite', flex: 1},
+    { field: 'date', headerName: 'Date de visite', flex: 1 },
     { field: 'amount', headerName: 'Montant dépensé', flex: 1.1 },
-    { 
-      field: 'satisfaction', 
-      headerName: 'Satisfaction', 
-      flex: 1, 
+    {
+      field: 'satisfaction',
+      headerName: 'Satisfaction',
+      flex: 1,
       renderCell: (params) => {
         return params.value ? <CheckCircleIcon style={{ color: 'green' }} /> : <CancelIcon style={{ color: 'red' }} />;
       }
@@ -116,49 +123,53 @@ export default function SavTable({ theme }) {
   ];
 
   return (
-    <Grid container xs={24} sm={24} md={24} lg={6} xl={6} style={{ borderRadius: '15px' }}>
+    <Grid item xs={12} sm={12} md={6} lg={6} xl={6} sx={{ borderRadius: '15px', display: "flex" }}>
       <Box
         width="100%"
-        marginBottom="20px"
-        mt="20px"
+        height="100%"
         p="20px"
         style={{ borderRadius: '15px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
-        backgroundColor={theme.palette.primary.main}
+        backgroundColor={theme.palette.primary.white}
       >
         <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} gutterBottom>
           Passage SAV
         </Typography>
-        <hr style={{ border: '1px solid #ccc', width: '100%', marginBottom:"20px" }} />
-        
+        <hr style={{ border: `1px solid ${theme.palette.secondary.light}`, width: '100%', marginBottom: "20px" }} />
+
         <StripedDataGrid
           rows={rows}
           columns={columns}
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
           }
-          sx={{ 
-            '&, [class^=MuiDataGrid]': { 
-                borderBottom: 'none', 
-                borderRight: 'none', 
-                borderLeft: 'none', 
-                borderTop: 'none', 
-                maxHeight: 'calc(100vh - 300px)',
-               
-                '& .MuiDataGrid-columnHeaderTitle': {
-                    fontWeight: 'bold',
-                },
+          sx={{
+            '&, [class^=MuiDataGrid]': {
+              borderBottom: 'none',
+              borderRight: 'none',
+              borderLeft: 'none',
+              borderTop: 'none',
+
+              '& .MuiDataGrid-main': {
+                flexGrow: 0
+              },
+              '& .MuiDataGrid-columnHeaderTitle': {
+                fontWeight: 'bold',
+              },
             },
-        }}
-                  initialState={{
+          }}
+          initialState={{
             filter: {
               filterModel: {
                 items: [],
                 quickFilterLogicOperator: GridLogicOperator.Or,
               },
             },
+            pagination: {
+              paginationModel: { page: 0, pageSize: 5 },
+            },
           }}
           slots={{ toolbar: QuickSearchToolbar }}
-          
+          localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
         />
       </Box>
     </Grid>

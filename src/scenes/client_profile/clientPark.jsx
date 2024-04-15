@@ -10,38 +10,73 @@ const ClientPark = ({ theme }) => {
   ];
 
   return (
-    <Grid container xs={12} sm={12} md={12} lg={6} xl={6}>
+    <Grid item xs={12} sm={12} md={6} lg={6} xl={6} sx={{ display: "flex" }}>
       <Box
-        marginBottom="20px"
-        mt="20px"
         p="20px"
+        height={"100%"}
         style={{ borderRadius: '15px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
-        backgroundColor={theme.palette.primary.main}
+        backgroundColor={theme.palette.primary.white}
       >
         <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} gutterBottom>
           Parc client
         </Typography>
-        <hr style={{ border: '1px solid #ccc', marginBottom: "20px" }} />
-        <Box mb="20px" display="flex" justifyContent="space-between" gap={2}>
-        <Card sx={{ flexGrow: 1, width: "45%", backgroundColor: theme.palette.secondary.faint, borderRadius: '10px', display: 'flex', alignItems: 'center' }}>
-                <CardContent sx={{ width: '100%', textAlign: 'center' }}>
-                    <Typography style={{ fontWeight: 600 }}>
-                        Commercial: Mr. Prénom Nom
-                    </Typography>
-                </CardContent>
-            </Card>
-            <Card sx={{ flexGrow: 1, backgroundColor: theme.palette.secondary.faint, borderRadius: '10px', display: 'flex', alignItems: 'center' }}>
-                <CardContent sx={{ width: '100%', textAlign: 'center' }}>
-                    <Typography style={{ fontWeight: 600 }}>
-                        Dernier achat: 19-11-2007
-                    </Typography>
-                </CardContent>
-            </Card>
+        <hr style={{ border: `1px solid ${theme.palette.secondary.light}`, width: '100%' }} />
+        <Box mb="20px" mt="20px" display="flex" justifyContent="space-between" gap={2}>
+          <Card sx={{
+            flexGrow: 1,
+            width: "45%",
+            backgroundColor: theme.palette.secondary.faint,
+            borderRadius: '10px',
+            display: 'flex',
+            alignItems: 'center',
+            boxShadow: 'none'
+          }}>
+            <CardContent sx={{
+              width: '100%',
+              textAlign: 'center',
+              paddingBottom: '16px !important'
+            }}>
+              <Typography style={{ fontWeight: 600 }}>
+                Commercial: Mr. Prénom Nom
+              </Typography>
+            </CardContent>
+          </Card>
+          <Card sx={{ 
+            flexGrow: 1, 
+            backgroundColor: theme.palette.secondary.faint, 
+            borderRadius: '10px', 
+            display: 'flex', 
+            alignItems: 'center',
+            boxShadow: 'none'
+          }}>
+            <CardContent sx={{
+              width: '100%',
+              textAlign: 'center',
+              paddingBottom: '16px !important'
+            }}>
+              <Typography style={{ fontWeight: 600 }}>
+                Dernier achat: 19-11-2007
+              </Typography>
+            </CardContent>
+          </Card>
         </Box>
-        <Grid  container spacing={2} style={{ overflowY: 'scroll', maxHeight: 'calc(100vh - 330px)' }}>
-          {clientData.map((data, index) => (
-            <Grid item xs={12} key={index}>
-              <Card sx={{ backgroundColor: theme.palette.secondary.faint, borderRadius: '10px' }}>
+        <Grid container spacing={0} sx={{
+          overflowY: 'scroll',
+          maxHeight: '340px',
+          marginTop: '0',
+        }}>
+          {clientData?.map((data, index) => (
+            <Grid item xs={12} key={index} sx={{
+              marginBottom: "20px",
+              "&:last-child": {
+                marginBottom: "0"
+              }
+            }}>
+              <Card sx={{ 
+                backgroundColor: theme.palette.secondary.faint, 
+                borderRadius: '10px',
+                boxShadow: 'none'
+              }}>
                 <CardContent>
                   <Grid container spacing={2}>
                     {Object.entries(data).map(([key, value]) => (
