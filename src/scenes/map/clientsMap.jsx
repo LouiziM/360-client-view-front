@@ -3,7 +3,7 @@ import { Choropleth } from './Choropleth';
 import { Box} from "@mui/material";
 import { ChartContext }  from "./misc/contexts.ts";
 import { useGetCustomersPerRegionQuery } from '../../features/state/clientSlice';
-import ClientsMapTable from "./ClientsMapTable"; 
+import RegionTable from "./ClientsMapTable"; 
 import { CircularProgress } from '@mui/material';
 import { useTheme } from "@mui/material";
 import Legend from "./Legend";
@@ -60,7 +60,7 @@ const ClientsMap = () => {
                     <Box sx={{ height: "89vh", position: 'relative', display: 'flex', flexDirection: 'row' }}>
                             <Choropleth setRegion={setRegion} setRegionId={setRegionId} data={regionalData} maxData={maxDataFloor+step} dataColors={dataColors}/>
                         <Legend dataColors={dataColors} setDataColors={setDataColors} data={regionalData} maxDataFloor={maxDataFloor}/>
-                        <ClientsMapTable setRegionId={setRegionId} data={regionalData} theme={theme}/> 
+                        <RegionTable setRegionId={setRegionId} data={regionalData} theme={theme}/> 
                     </Box>
                 </ChartContext.Provider>
             )}

@@ -3,6 +3,8 @@ import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, frFR, gridClasses, GridLogicOperator, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import { Grid, Box, Typography } from '@mui/material';
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
+import { CustomTooltip } from './misc/customTooltip.tsx';
+
 
 const ODD_OPACITY = 0.4;
 
@@ -64,6 +66,10 @@ const MarketingCampaigns = ({ theme }) => {
   const defaultDataColors = ["#3f51b5", "#4caf50", "#00a7c4"];
   const [dataColors, setDataColors] = useState(defaultDataColors);
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [showChart, setShowChart] = useState(true);
+  const toggleChart = () => {
+    setShowChart((prevShowChart) => !prevShowChart);
+  };
 
   const data = [
     {
@@ -137,13 +143,118 @@ const MarketingCampaigns = ({ theme }) => {
     return data;
   }, []);
 
-  const columns = [
-    { field: 'titre', headerName: 'Titre', flex: 1 },
-    { field: 'marque', headerName: 'Marque', flex: 1 },
-    { field: 'type', headerName: 'Type', flex: 1 },
-    { field: 'date', headerName: 'Date', flex: 1 },
-    { field: 'contenu', headerName: 'Contenu', flex: 1 },
-  ];
+  const columns = React.useMemo(
+    () => [
+      {
+        field: 'titre',
+        headerName: 'Titre',
+        flex: 1,
+        renderCell: function render({ row }) {
+          return (
+            <CustomTooltip title={row.titre}>
+              <Typography >
+                {row.titre}
+              </Typography>
+            </CustomTooltip>
+          );
+        },
+      },
+      {
+        field: 'marque',
+        headerName: 'Marque',
+        flex: 1,
+        renderCell: function render({ row }) {
+          return (
+            <CustomTooltip title={row.marque}>
+              <Typography
+                sx={{
+                  whiteSpace: 'pre-wrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: '1',
+                  WebkitBoxOrient: 'vertical',
+                }}
+              >
+                {row.marque}
+              </Typography>
+            </CustomTooltip>
+          );
+        },
+      },
+      {
+        field: 'type',
+        headerName: 'Type',
+        flex: 1,
+        renderCell: function render({ row }) {
+          return (
+            <CustomTooltip title={row.type}>
+              <Typography
+                sx={{
+                  whiteSpace: 'pre-wrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: '1',
+                  WebkitBoxOrient: 'vertical',
+                }}
+              >
+                {row.type}
+              </Typography>
+            </CustomTooltip>
+          );
+        },
+      },
+      {
+        field: 'date',
+        headerName: 'Date',
+        flex: 1,
+        renderCell: function render({ row }) {
+          return (
+            <CustomTooltip title={row.date}>
+              <Typography
+                sx={{
+                  whiteSpace: 'pre-wrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: '1',
+                  WebkitBoxOrient: 'vertical',
+                }}
+              >
+                {row.date}
+              </Typography>
+            </CustomTooltip>
+          );
+        },
+      },
+      {
+        field: 'contenu',
+        headerName: 'Contenu',
+        flex: 1,
+        renderCell: function render({ row }) {
+          return (
+            <CustomTooltip title={row.contenu}>
+              <Typography
+                sx={{
+                  whiteSpace: 'pre-wrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: '1',
+                  WebkitBoxOrient: 'vertical',
+                }}
+              >
+                {row.contenu}
+              </Typography>
+            </CustomTooltip>
+          );
+        },
+      },
+    ],
+    []
+  );
+  
 
   const Metric = ({ center }) => {
     if (hoveredIndex !== null) {
@@ -264,6 +375,7 @@ const MarketingCampaigns = ({ theme }) => {
       </Box>
     </Grid>
   );
+  
 };
 
 export default MarketingCampaigns;

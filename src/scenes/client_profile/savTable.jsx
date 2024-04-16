@@ -4,6 +4,7 @@ import { DataGrid, frFR, gridClasses, GridLogicOperator, GridToolbarQuickFilter 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { Grid, Box, Typography } from '@mui/material';
+import { CustomTooltip } from './misc/customTooltip.tsx';
 
 const ODD_OPACITY = 0.4;
 
@@ -109,18 +110,79 @@ export default function SavTable({ theme }) {
   );
 
   const columns = [
-    { field: 'date', headerName: 'Date de visite', flex: 1 },
-    { field: 'amount', headerName: 'Montant dépensé', flex: 1.1 },
-    {
-      field: 'satisfaction',
-      headerName: 'Satisfaction',
+    { 
+      field: 'date', 
+      headerName: 'Date de visite', 
       flex: 1,
+      renderCell: (params) => (
+        <CustomTooltip title={params.value}>
+          <Typography
+            sx={{
+              whiteSpace: 'pre-wrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: '1',
+              WebkitBoxOrient: 'vertical',
+            }}
+          >
+            {params.value}
+          </Typography>
+        </CustomTooltip>
+      ),
+    },
+    { 
+      field: 'amount', 
+      headerName: 'Montant dépensé', 
+      flex: 1.1,
+      renderCell: (params) => (
+        <CustomTooltip title={params.value}>
+          <Typography
+            sx={{
+              whiteSpace: 'pre-wrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: '1',
+              WebkitBoxOrient: 'vertical',
+            }}
+          >
+            {params.value}
+          </Typography>
+        </CustomTooltip>
+      ),
+    },
+    { 
+      field: 'satisfaction', 
+      headerName: 'Satisfaction', 
+      flex: 1, 
       renderCell: (params) => {
         return params.value ? <CheckCircleIcon style={{ color: 'green' }} /> : <CancelIcon style={{ color: 'red' }} />;
       }
     },
-    { field: 'site', headerName: 'Site', flex: 1 },
+    { 
+      field: 'site', 
+      headerName: 'Site', 
+      flex: 1,
+      renderCell: (params) => (
+        <CustomTooltip title={params.value}>
+          <Typography
+            sx={{
+              whiteSpace: 'pre-wrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: '1',
+              WebkitBoxOrient: 'vertical',
+            }}
+          >
+            {params.value}
+          </Typography>
+        </CustomTooltip>
+      ),
+    },
   ];
+  
 
   return (
     <Grid item xs={12} sm={12} md={6} lg={6} xl={6} sx={{ borderRadius: '15px', display: "flex" }}>

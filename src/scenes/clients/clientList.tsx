@@ -13,7 +13,8 @@ import { useState } from 'react';
 import Drawer from '@mui/material/Drawer';
 import CircularProgress from '@mui/material/CircularProgress';
 import { frFR } from "@mui/x-data-grid/locales";
-
+import { CustomTooltip } from 'scenes/client_profile/misc/customTooltip.tsx';
+import dayjs from 'dayjs';
 
 const ODD_OPACITY = 0.4;
 
@@ -104,23 +105,89 @@ const Clients = () => {
   };
 
   const columns: GridColDef[] = [
-    { field: 'CUSTNO', headerName: 'Nb', type: 'number', width: 80 },
-    { field: 'NAME2', headerName: 'Nom', type: 'string', width: 150 },
-    { field: 'FIRSTNAME', headerName: 'Prénom', type: 'string', width: 150 },
-    { field: 'CITY', headerName: 'Ville', type: 'string', width: 150 },
-    { field: 'COUNTRY', headerName: 'Pays', type: 'string', width: 120 },
+    { 
+      field: 'CUSTNO', 
+      headerName: 'Nb', 
+      type: 'number', 
+      width: 80,
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row.CUSTNO ? row.CUSTNO.toString() : ''} />
+      )
+    },
+    { 
+      field: 'NAME2', 
+      headerName: 'Nom', 
+      type: 'string', 
+      width: 150,
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row.NAME2 ? row.NAME2 : ''} />
+      )
+    },
+    { 
+      field: 'FIRSTNAME', 
+      headerName: 'Prénom', 
+      type: 'string', 
+      width: 150,
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row.FIRSTNAME ? row.FIRSTNAME : ''} />
+      )
+    },
+    { 
+      field: 'CITY', 
+      headerName: 'Ville', 
+      type: 'string', 
+      width: 150,
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row.CITY ? row.CITY : ''} />
+      )
+    },
+    { 
+      field: 'COUNTRY', 
+      headerName: 'Pays', 
+      type: 'string', 
+      width: 120,
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row.COUNTRY ? row.COUNTRY : ''} />
+      )
+    },
     {
       field: 'DATECRE',
       headerName: 'Crée le',
       type: 'date',
       width: 110,
-      valueGetter: (params) => new Date(params.value)
+      valueGetter: (params) => new Date(params.value),
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row.DATECRE ? dayjs(row.DATECRE).format('DD/MM/YYYY') : ''} />
+      )
     },
-    { field: 'PHONE', headerName: 'Tel', type: 'string', width: 150 },
-    { field: 'ZIP', headerName: 'ZIP', type: 'number', width: 90 },
-    { field: 'ADDRESS', headerName: 'Adresse', type: 'string', flex: 1 },
+    { 
+      field: 'PHONE', 
+      headerName: 'Tel', 
+      type: 'string', 
+      width: 150,
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row.PHONE ? row.PHONE : ''} />
+      )
+    },
+    { 
+      field: 'ZIP', 
+      headerName: 'ZIP', 
+      type: 'number', 
+      width: 90,
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row.ZIP ? row.ZIP.toString() : ''} />
+      )
+    },
+    { 
+      field: 'ADDRESS', 
+      headerName: 'Adresse', 
+      type: 'string', 
+      flex: 1,
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row.ADDRESS ? row.ADDRESS : ''} />
+      )
+    },
   ];
-  
 
   const handleRowClick: GridEventListener<'rowClick'> = (params) => {
     const clickedRow = clients.find(client => client.CUSTNO === params.row.CUSTNO);

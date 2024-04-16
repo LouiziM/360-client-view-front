@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import FlexBetween from "components/FlexBetween";
 import Header from "components/Header";
 import {
@@ -27,12 +27,32 @@ const ClientProfile = () => {
   const location = useLocation();
   const { state } = location;
 
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo(0, 0);
+    console.log("lols");
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const satisfactionElement = document.getElementById("clientSatisfaction");
+      if (satisfactionElement) {
+        const { top, bottom } = satisfactionElement.getBoundingClientRect();
+        if (top >= 0 && bottom <= window.innerHeight) {
+          setShowScrollButton(true);
+        } else {
+          setShowScrollButton(false);
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <Box p="1.5rem 2.5rem" position="relative" bgcolor={"#F2F2F2"}>
@@ -77,27 +97,28 @@ const ClientProfile = () => {
         </Grid>
       </Box>
 
-      <Box mt={"24px"}>
+      <Box mt={"24px"} id="clientSatisfaction">
         <Grid container spacing={3}>
           <MarketingCampaigns theme={theme} />
           <ClientSatisfaction theme={theme} />
         </Grid>
       </Box>
 
-      <Box onClick={scrollToTop}>
-        <ExpandCircleDown
-          sx={{
-            position: "fixed",
-            bottom: "10px",
-            right: "10px",
-            transform: "rotate(180deg)",
-            color: theme.palette.secondary.light,
-            fontSize: "4rem",
-            cursor: "pointer",
-          }}
-        />
-      </Box>
-
+      {showScrollButton && (
+        <Box onClick={scrollToTop}>
+          <ExpandCircleDown
+            sx={{
+              position: "fixed",
+              bottom: "10px",
+              right: "10px",
+              transform: "rotate(180deg)",
+              color: theme.palette.secondary.light,
+              fontSize: "4rem",
+              cursor: "pointer",
+            }}
+          />
+        </Box>
+      )}
     </Box>
   );
 };

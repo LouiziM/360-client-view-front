@@ -17,6 +17,8 @@ import { createSvgIcon } from '@mui/material/utils';
 import CircularProgress from '@mui/material/CircularProgress';
 import Switch from '@mui/material/Switch';
 import { alpha } from '@mui/material/styles';
+import { CustomTooltip } from 'scenes/client_profile/misc/customTooltip.tsx';
+import dayjs from 'dayjs';
 
 import {
   GridRowsProp,
@@ -348,35 +350,39 @@ const useFakeMutation = () => {
     setRowModesModel(newRowModesModel);
   };
 
-  const dateTimeFormatter = (value: string) => {
-    if (!value) {
-        return '';
-    }
-    const date = new Date(value);
-    if (isNaN(date.getTime())) {
-        return ''; 
-    }
-    const formattedDate = new Intl.DateTimeFormat('fr-CA', {
-        year: 'numeric', month: '2-digit', day: '2-digit'
-    }).format(date);
-    const formattedTime = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-    return `${formattedDate} à ${formattedTime}`;
-};
 
 
   const columns: GridColDef[] = [
-    { field: 'username', headerName: 'Utilisateur',type: 'string', flex: 1, editable: true },
-    { field: 'pwd', headerName: 'Mot de passe',type: 'string', flex: 1, editable: true },
-   
-    
+    {
+      field: 'username', 
+      headerName: 'Utilisateur', 
+      type: 'string', 
+      flex: 1, 
+      editable: true,
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row.username} />
+      )
+    },
+    { 
+      field: 'pwd',   
+      headerName: 'Mot de passe',
+      type: 'string', 
+      flex: 1, 
+      editable: true,
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row.pwd} />
+      )
+    },
     {
       field: 'lastLogin',
-      headerName: 'dérniere connexion',
+      headerName: 'Dernière connexion',
       type: 'string',
       flex: 1,
       editable: false,
-      valueFormatter: ({ value }) => dateTimeFormatter(value)
-
+      valueFormatter: ({ value }) => dayjs(value).format('DD/MM/YYYY'),
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row.lastLogin ? dayjs(row.lastLogin).format('DD/MM/YYYY') : ''} />
+      )
     },
     {
       field: 'creationDate',
@@ -384,9 +390,12 @@ const useFakeMutation = () => {
       type: 'string',
       flex: 1,
       editable: false,
-      valueFormatter: ({ value }) => dateTimeFormatter(value)
-
+      valueFormatter: ({ value }) => dayjs(value).format('DD/MM/YYYY'),
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row.creationDate ? dayjs(row.creationDate).format('DD/MM/YYYY') : ''} />
+      )
     },
+  
     {
       field: 'active',
       headerName: 'Active',

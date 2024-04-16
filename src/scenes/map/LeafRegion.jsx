@@ -1,10 +1,13 @@
 import React, { useRef, useEffect } from 'react';
-import { MapContainer, GeoJSON, TileLayer } from 'react-leaflet';
+import { MapContainer, GeoJSON, TileLayer,Marker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
+import MarkerClusterGroup from "react-leaflet-cluster";
 
+import { data } from "./misc/data/locations";
 import { RSK, BMK, LSH, SM, CS, ORIENTAL, FM, DT, GON, MS, TTH, DOE } from './misc/data/Regions';
+// map.flyToBounds([center]);
 
 const regionDataMap = {
     1: LSH,  // Laayoune-Saguia Hamra
@@ -26,6 +29,11 @@ const LeafRegion = ({ regionId, onReturn ,theme }) => {
     const mapRef = useRef();
     const region = regionDataMap[regionId];
     console.log(regionId)
+
+    const customIcon = new L.Icon({
+        iconUrl: require("./misc/image.svg").default,
+        iconSize: new L.Point(40, 47)
+      });
 
     useEffect(() => {
         if (mapRef.current && region) {
@@ -52,6 +60,19 @@ const LeafRegion = ({ regionId, onReturn ,theme }) => {
                         <KeyboardReturnIcon style={{ fontSize: '40px', color:theme.palette.neutral[0] }}/>
                     </button>
                 </div>
+                <MarkerClusterGroup chunkedLoading>
+                    {data.results.map((address, index) => (
+                        <Marker
+                        key={index}
+                        position={[
+                            address.lat ? address.lat : 0,
+                            address.lng ? address.lng : 0
+                        ]}
+                        title={address.name}
+                        icon={customIcon}
+                        ></Marker>
+                    ))}
+                </MarkerClusterGroup>
             </MapContainer>
         </div>
     );
