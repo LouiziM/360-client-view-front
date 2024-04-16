@@ -72,14 +72,15 @@ const DataCompletion = ({ theme, client }) => {
                   flexDirection="column"
                   alignItems="center"
                   width="100%"
-                  height={"19vh"}
+         
                 >
                   <Box
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
                     width={100}
-                    height={"18vh"}
+                    height={"120px"}
+
                   >
                     <ResponsiveRadialBar
 
