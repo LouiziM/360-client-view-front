@@ -22,8 +22,8 @@ function App() {
             <Route path="/admin" element={<Admin />} />
             <Route path="/clientprofile" element={<ClientProfile />} />
             <Route path="/clients" element={<ClientList />} />
-            <Route path="/map" element={<ClientsMap />} />
-            {/* <Route path="/pg" element={<renderShowEchartsLayer  />} /> */}
+            {/* <Route path="/map" element={<ClientsMap />} /> */}
+            {/* <Route path="/pg" element={<WidgetGeoMap />} /> */}
 
             </Route>
           </Routes>

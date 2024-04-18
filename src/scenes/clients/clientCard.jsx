@@ -70,16 +70,23 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
 
     const copyToClipboard = async (copyArg) => {
         try {
-            setSnackbarOpen(false);
-            setTimeout(() => {
+            if (navigator.clipboard) {
+                await navigator.clipboard.writeText(copyArg);
                 setSnackbarOpen(true);
-            }, 200);
-            await navigator.clipboard.writeText(copyArg);
+            } else {
+                // Fallback method for browsers that don't support Clipboard API
+                const textarea = document.createElement('textarea');
+                textarea.value = copyArg;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                setSnackbarOpen(true);
+            }
         } catch (error) {
             console.error("Failed to copy text to clipboard:", error);
         }
-    };
-
+    };    
 
     const handleCloseSnackbar = (event, reason) => {
         if (reason === 'clickaway') {
@@ -113,11 +120,11 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
                         xs: "300px",
                         md: "450px"
                     }}
-                    style={{ 
-                        borderRadius: '15px', 
-                        overflow: 'hidden', 
-                        boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)', 
-                        backgroundColor: '#f3f3f3', 
+                    style={{
+                        borderRadius: '15px',
+                        overflow: 'hidden',
+                        boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
+                        backgroundColor: '#f3f3f3',
                         position: 'relative',
                     }}
                 >
@@ -126,11 +133,11 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
                     </IconButton>
                     <Typography variant="h5" fontWeight="bold" gutterBottom>
                         <Box>
-                            <Typography variant="h5" fontWeight="bold" gutterBottom onClick={() => copyToClipboard(`${data?.FIRSTNAME} ${data?.NAME2}`)}>
+                            <Typography variant="h5" fontWeight="bold" gutterBottom onClick={() => copyToClipboard(`${data?.FIRSTNAME || ' '} ${data?.NAME2 || ' '}`)}>
                                 {`${data?.CIVILITY || ''}${data?.FIRSTNAME || ''} ${data?.NAME2 || ''}`}
                             </Typography>
                             {data?.NATIONALITY &&
-                                <Typography variant="body2" component="span" style={{ fontSize: 'smaller', color: 'grey' }} onClick={() => copyToClipboard(`${data?.NATIONALITY}`)}>
+                                <Typography variant="body2" component="span" style={{ fontSize: 'smaller', color: 'grey' }} onClick={() => copyToClipboard(`${data?.NATIONALITY && data?.NATIONALITY}`)}>
                                     {`${data?.NATIONALITY || ''}`}
                                 </Typography>
                             }
@@ -151,23 +158,23 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
                                     <AssuredWorkloadIcon sx={{ marginRight: '.7rem', marginLeft: '.3rem' }} />
                                     Entreprise
                                 </Typography>
-                                <Typography sx={{ display: 'flex', alignItems: 'center', marginLeft: '2rem', color: theme.palette.secondary.light }} onClick={() => copyToClipboard(`${data?.ENTREPRISE}`)}>
+                                <Typography sx={{ display: 'flex', alignItems: 'center', marginLeft: '2rem', color: theme.palette.secondary.light }} onClick={() => copyToClipboard(`${data?.ENTREPRISE || ' '}`)}>
                                     {`${data?.ENTREPRISE || '-'}`}
                                 </Typography>
                                 <Typography sx={{ display: 'flex', alignItems: 'center' }}>
                                     <BusinessCenterIcon sx={{ marginRight: '.7rem', marginLeft: '.3rem' }} />
                                     Poste
                                 </Typography>
-                                <Typography sx={{ display: 'flex', alignItems: 'center', marginLeft: '2rem', color: theme.palette.secondary.light }} onClick={() => copyToClipboard(`${data?.POSTE}`)}>
+                                <Typography sx={{ display: 'flex', alignItems: 'center', marginLeft: '2rem', color: theme.palette.secondary.light }} onClick={() => copyToClipboard(`${data?.POSTE || ' '}`)}>
                                     {data?.POSTE || '-'}
                                 </Typography>
-                                <Typography sx={{ display: 'flex', alignItems: 'center' }}>
+                                {/* <Typography sx={{ display: 'flex', alignItems: 'center' }}>
                                     <SupervisorAccountIcon sx={{ marginRight: '.7rem', marginLeft: '.3rem' }} />
                                     Assigné à
                                 </Typography>
-                                <Typography sx={{ display: 'flex', alignItems: 'center', marginLeft: '2rem', color: theme.palette.secondary.light }} onClick={() => copyToClipboard(`${contact.manager}`)}>
+                                <Typography sx={{ display: 'flex', alignItems: 'center', marginLeft: '2rem', color: theme.palette.secondary.light }} onClick={() => copyToClipboard(`${contact.manager && contact.manager}`)}>
                                     {contact.manager || '-'}
-                                </Typography>
+                                </Typography> */}
                             </Box>
                         </Grid>
                     </Grid>
@@ -208,11 +215,11 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                             <Box ml="1.5rem" gap={2} sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end', height: '100%' }}>
-                                <Box sx={{ 
+                                <Box sx={{
                                     width: '70%',
                                     mt: {
                                         xs: 3
-                                    } 
+                                    }
                                 }}>
                                     <Button
                                         variant="contained"

@@ -10,7 +10,6 @@ const DetailsStripe = ({ theme, data }) => {
 
   useEffect(() => {
     if (data) {
-      console.log("data :", data);
       setList2Data([
         data?.data?.TYPECUST || "__",
         data?.data?.TYPECUST2 || "__",
@@ -58,13 +57,13 @@ const DetailsStripe = ({ theme, data }) => {
     }}>
       <Grid item xs={12} sm={12} md={4} order={query900 ? 0 : 1}>
         {list1Data?.map((item, index) => (
-          <Grid item container spacing={4} key={index} width={"100%"} mt={'18px'} ml={0}>
-            <Grid xs={5}>
+          <Grid item container spacing={4} key={index} width={"100%"} mt={'22px'} ml={0}>
+            <Grid item xs={5} sx={{ pl: '0 !important', pt: '0 !important' }}>
               <Typography variant="h5" fontWeight="bold" color={theme.palette.background.default}>
                 {item}
               </Typography>
             </Grid>
-            <Grid xs={7}>
+            <Grid item xs={7} sx={{ pl: '0 !important', pt: '0 !important' }}>
               <Typography variant="h5" color={theme.palette.background.default}>
                 {list2Data[index]}
               </Typography>
@@ -84,19 +83,19 @@ const DetailsStripe = ({ theme, data }) => {
             }}
           />
           <Typography variant="h5" fontWeight="bold" color={theme.palette.background.default} style={{ textAlign: 'center' }}>
-            {`${data?.data?.CIVILITY}${data?.data?.FIRSTNAME} ${data?.data?.NAME2}`}
+            {`${data?.data?.CIVILITY || ''}${data?.data?.FIRSTNAME || ''} ${data?.data?.NAME2 || ''}`}
           </Typography>
         </Box>
       </Grid>
       <Grid item xs={12} sm={12} md={4} order={2}>
         {list3Data?.map((item, index) => (
-          <Grid item container spacing={4} key={index} width={"100%"} mt={'18px'} ml={0}> 
-            <Grid xs={query900 ? 4 : 5}>
+          <Grid item container spacing={4} key={index} width={"100%"} mt={'22px'} ml={0}> 
+            <Grid item xs={query900 ? 4 : 5} sx={{ pl: '0 !important', pt: '0 !important' }}>
               <Typography variant="h5" fontWeight="bold" color={theme.palette.background.default}>
                 {item}
               </Typography>
             </Grid>
-            <Grid xs={query900 ? 8 : 7}>
+            <Grid item xs={query900 ? 8 : 7} sx={{ pl: '0 !important', pt: '0 !important' }}>
               <Typography variant="h5" color={theme.palette.background.default} sx={{ overflowWrap: 'anywhere' }}>
                 {list4Data[index]}
               </Typography>

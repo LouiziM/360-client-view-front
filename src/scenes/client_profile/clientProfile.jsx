@@ -27,38 +27,10 @@ const ClientProfile = () => {
   const location = useLocation();
   const { state } = location;
 
-  const [showScrollButton, setShowScrollButton] = useState(false);
-
-  const scrollToTop = () => {
-    window.scrollTo(0, 0);
-    console.log("lols");
-  };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const satisfactionElement = document.getElementById("clientSatisfaction");
-      if (satisfactionElement) {
-        const { top, bottom } = satisfactionElement.getBoundingClientRect();
-        if (top >= 0 && bottom <= window.innerHeight) {
-          setShowScrollButton(true);
-        } else {
-          setShowScrollButton(false);
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
   return (
     <Box p="1.5rem 2.5rem" position="relative" bgcolor={"#F2F2F2"}>
       <FlexBetween>
         <Header title="Profil client" />
-
         <Box>
           <Button
             sx={{
@@ -104,21 +76,6 @@ const ClientProfile = () => {
         </Grid>
       </Box>
 
-      {showScrollButton && (
-        <Box onClick={scrollToTop}>
-          <ExpandCircleDown
-            sx={{
-              position: "fixed",
-              bottom: "10px",
-              right: "10px",
-              transform: "rotate(180deg)",
-              color: theme.palette.secondary.light,
-              fontSize: "4rem",
-              cursor: "pointer",
-            }}
-          />
-        </Box>
-      )}
     </Box>
   );
 };

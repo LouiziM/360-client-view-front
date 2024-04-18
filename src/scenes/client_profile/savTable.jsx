@@ -230,6 +230,7 @@ export default function SavTable({ theme }) {
               paginationModel: { page: 0, pageSize: 5 },
             },
           }}
+          pageSizeOptions={[5]}
           slots={{ toolbar: QuickSearchToolbar }}
           localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
         />

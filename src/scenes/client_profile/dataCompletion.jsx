@@ -64,7 +64,7 @@ const DataCompletion = ({ theme, client }) => {
             Complétude des données
           </Typography>
           <hr style={{ border: `1px solid ${theme.palette.secondary.light}`, width: '100%' }} />
-          <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap">
+          <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" margin={"20px 0 0 0"}>
             {data?.map(({ label, percentage, missingFields }, index) => (
               <Box key={index} display="flex" flexDirection="column" alignItems="center" justifyContent="space-between" width="30%">
                 <Box
@@ -72,7 +72,6 @@ const DataCompletion = ({ theme, client }) => {
                   flexDirection="column"
                   alignItems="center"
                   width="100%"
-         
                 >
                   <Box
                     display="flex"
@@ -80,12 +79,11 @@ const DataCompletion = ({ theme, client }) => {
                     justifyContent="center"
                     width={100}
                     height={"120px"}
-
                   >
                     <ResponsiveRadialBar
 
-                      width={100}
-                      height={120}
+                      // width={100}
+                      // height={120}
                       valueFormat={(v) => `${v}%`}
                       maxValue={100}
                       startAngle={360}
@@ -93,14 +91,6 @@ const DataCompletion = ({ theme, client }) => {
                       cornerRadius={100}
                       innerRadius={0.8}
                       colors={[theme.palette.secondary.light]}
-                      motionConfig={{
-                        mass: 6,
-                        tension: 251,
-                        friction: 114,
-                        clamp: false,
-                        precision: 0.01,
-                        velocity: 0.05
-                      }}
                       transitionMode="startAngle"
                       data={[
                         {

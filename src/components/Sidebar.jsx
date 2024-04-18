@@ -29,10 +29,10 @@ const navItems = [
     text: "Clients",
     icon: <GroupsIcon sx={{ color: "#FFF" }} />
   },
-  {
-    text: "Map",
-    icon: <MapIcon sx={{ color: "#FFF" }} />
-  },
+  // {
+  //   text: "Map",
+  //   icon: <MapIcon sx={{ color: "#FFF" }} />
+  // },
 ];
 
 const Sidebar = ({

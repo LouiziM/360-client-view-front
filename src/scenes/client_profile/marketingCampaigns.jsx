@@ -317,14 +317,6 @@ const MarketingCampaigns = ({ theme }) => {
                 // margin={{ bottom: 40 }}
                 cornerRadius={16}
                 labelsTextColor={{ theme: 'grid.line.stroke' }}
-                motionConfig={{
-                  mass: 6,
-                  tension: 320,
-                  friction: 114,
-                  clamp: false,
-                  precision: 0.01,
-                  velocity: 0.05
-                }}
                 transitionMode="startAngle"
                 layers={['grid', 'tracks', 'bars', 'labels', Metric]}
               />
@@ -366,6 +358,7 @@ const MarketingCampaigns = ({ theme }) => {
                     paginationModel: { page: 0, pageSize: 5 },
                   },
                 }}
+                pageSizeOptions={[5]}
                 slots={{ toolbar: QuickSearchToolbar }}
                 localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
               />
