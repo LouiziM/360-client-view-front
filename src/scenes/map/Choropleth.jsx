@@ -57,7 +57,7 @@ const props = {
 
 export function Choropleth({setRegion, setRegionId,data,dataColors , maxData}) {
 
-  const handleClick = (node, event) => {
+  const handleClick = (node) => {
     setRegion(node.label)
     setRegionId(node.id)
   }

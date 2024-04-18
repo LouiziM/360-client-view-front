@@ -36,9 +36,7 @@ const ClientsMap = () => {
         setRegionId('none');
     };
 
-    useEffect(() => {
-        console.log(region, regionId);
-    }, [region, regionId]);
+
 
     if (regionId !== 'none') {
         return <LeafRegion regionId={regionId} onReturn={handleReturn} theme={theme}/>; 

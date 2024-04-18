@@ -1,32 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, {useRef } from 'react';
 import { Box, Typography } from '@mui/material'; 
 import { styled } from '@mui/system'; 
 
-const defaultColors = [
-  '#E3F2FD', // lightest shade of blue
-  '#BBDEFB',
-  '#90CAF9',
-  '#64B5F6',
-  '#42A5F5',
-  '#2196F3', // medium shade of blue
-  '#1E88E5',
-  '#1976D2',
-  '#1565C0',
-  '#0D47A1',
-  '#0d2c5c' // darkest shade of blue
-];
 
 const Legend = ({dataColors, setDataColors, maxDataFloor }) => {
-  const [hoveredIndex, setHoveredIndex] = useState(null);
   const flickerInProgress = useRef(false);
 
-  const handleLegendHover = (index) => {
-    setHoveredIndex(index);
-  };
-
-  const resetColors = () => {
-    setHoveredIndex(null);
-  };
 
   
   const step = maxDataFloor / 10;
@@ -46,7 +25,6 @@ const Legend = ({dataColors, setDataColors, maxDataFloor }) => {
 
   return (
     <Box
-      onMouseLeave={resetColors}
       display="flex"
       flexDirection="column"
       width="16vw"
@@ -56,8 +34,6 @@ const Legend = ({dataColors, setDataColors, maxDataFloor }) => {
       {legendValues.map((value, index) => (
         <LegendItem
           key={index}
-          onMouseEnter={() => handleLegendHover(index)}
-          onMouseLeave={resetColors}
           onClick={() => flickerColor(index)} 
         >
           <Box
@@ -74,8 +50,6 @@ const Legend = ({dataColors, setDataColors, maxDataFloor }) => {
         </LegendItem>
       ))}
       <LegendItem
-        onMouseEnter={() => handleLegendHover(10)}
-        onMouseLeave={resetColors}
         onClick={() => flickerColor(10)} 
       >
         <Box
