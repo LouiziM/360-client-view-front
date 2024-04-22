@@ -92,6 +92,7 @@ const DataCompletion = ({ theme, client }) => {
                       innerRadius={0.8}
                       colors={[theme.palette.secondary.light]}
                       transitionMode="startAngle"
+                      isInteractive={missingFields?.length > 0}
                       data={[
                         {
                           id: missingFields?.map((field, index) => (

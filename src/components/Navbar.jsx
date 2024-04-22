@@ -34,17 +34,6 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           <IconButton onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             <MenuIcon sx={{ color: theme.palette.text.primary }} />
           </IconButton>
-          <FlexBetween
-            borderRadius="9px"
-            gap="3rem"
-            p="0.1rem 1.5rem"
-            backgroundColor={theme.palette.background.alt}
-          >
-            <InputBase placeholder="Search..." sx={{ color: theme.palette.text.primary }} />
-            <IconButton>
-              <Search sx={{ color: theme.palette.text.primary }} />
-            </IconButton>
-          </FlexBetween>
         </FlexBetween>
 
         {/* RIGHT SIDE */}

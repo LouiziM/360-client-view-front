@@ -20,9 +20,8 @@ const authSlice = createSlice({
     logOut: (state, action) => {
       state.user = null;
       state.token = null;
-
-      // Remove token from storage on logout
-      localStorage.removeItem("authToken");
+      localStorage.clear();
+      sessionStorage.clear();
     },
   },
 });

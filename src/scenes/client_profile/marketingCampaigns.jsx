@@ -74,15 +74,7 @@ const MarketingCampaigns = ({ theme }) => {
   const data = [
     {
       id: "Réponses aux campagnes",
-      data: [{ x: "Réponses aux campagnes", y: 100 }]
-    },
-    {
-      id: "Retour sur investissement",
-      data: [{ x: "Retour sur investissement", y: 51 }]
-    },
-    {
-      id: "Conversion Campagne",
-      data: [{ x: "Conversion Campagne", y: 80 }]
+      data: [{ x: "", y: 20 }]
     }
   ];
 
@@ -254,7 +246,7 @@ const MarketingCampaigns = ({ theme }) => {
     ],
     []
   );
-  
+
 
   const Metric = ({ center }) => {
     if (hoveredIndex !== null) {
@@ -299,23 +291,27 @@ const MarketingCampaigns = ({ theme }) => {
               <ResponsiveRadialBar
                 data={data}
                 innerRadius={0.3}
-                padding={0.35}
-                cornerRadius={1.5}
+                padding={0.7}
+                cornerRadius={16}
                 colors={dataColors}
-                borderColor={{
-                  from: 'color',
-                  modifiers: [['darker', '1']]
-                }}
-                enableTracks={false}
+                maxValue={100}
+                startAngle={0}
+                endAngle={360}
+                // borderColor={{
+                //   from: 'color',
+                //   modifiers: [['darker', '1']]
+                // }}
+                enableRadialGrid={false}
+                enableCircularGrid={false}
+                enableTracks={true}
                 circularAxisOuter={null}
                 labelsSkipAngle={0}
                 labelsRadiusOffset={0}
                 // width={300}
                 height={300}
                 radialAxisStart={null}
-                isInteractive={false}
+                isInteractive={true}
                 // margin={{ bottom: 40 }}
-                cornerRadius={16}
                 labelsTextColor={{ theme: 'grid.line.stroke' }}
                 transitionMode="startAngle"
                 layers={['grid', 'tracks', 'bars', 'labels', Metric]}
@@ -368,7 +364,7 @@ const MarketingCampaigns = ({ theme }) => {
       </Box>
     </Grid>
   );
-  
+
 };
 
 export default MarketingCampaigns;

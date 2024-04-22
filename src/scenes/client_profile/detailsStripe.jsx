@@ -74,7 +74,7 @@ const DetailsStripe = ({ theme, data }) => {
       <Grid item xs={12} sm={12} md={4} order={query900 ? 1 : 0}>
         <Box display='flex' alignItems='center' justifyContent='center' flexDirection='column'>
           <img
-            src={require('../../assets/profil.png')}
+            src={require('../../assets/profile.png')}
             alt="Image Client"
             style={{
               width: "230px",
