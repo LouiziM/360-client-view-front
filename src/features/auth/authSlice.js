@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import Cookies from "js-cookie";
 
 // Load token from storage on application start
 const storedToken = localStorage.getItem("authToken");
@@ -22,6 +23,7 @@ const authSlice = createSlice({
       state.token = null;
       localStorage.clear();
       sessionStorage.clear();
+      Cookies.remove('jwt');
     },
   },
 });
