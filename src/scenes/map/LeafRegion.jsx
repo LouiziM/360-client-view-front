@@ -6,6 +6,7 @@ import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import MarkerClusterGroup from "react-leaflet-cluster";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import RegionDataDisplay from './misc/components/RegionDataDisplay';
 
 import { ORIENTAL_MARKERS, LSH_MARKERS, TTH_MARKERS, FM_MARKERS, RSK_MARKERS, CS_MARKERS, BMK_MARKERS, DT_MARKERS, SM_MARKERS, GON_MARKERS, DOE_MARKERS, MS_MARKERS } from "./misc/data/locations";
 import { RSK, BMK, LSH, SM, CS, ORIENTAL, FM, DT, GON, MS, TTH, DOE } from './misc/data/Regions';
@@ -42,7 +43,7 @@ const LeafRegion = ({ regionId, onReturn, theme }) => {
         11: DOE_MARKERS,
         12: MS_MARKERS,
     };
-
+    const [hoveredsTooltip, setHoveredsTooltip] = useState(null);
     const [showAllRegions, setShowAllRegions] = useState(false);
 
     const customIcon = new L.Icon({
@@ -63,25 +64,28 @@ const LeafRegion = ({ regionId, onReturn, theme }) => {
 
     const onEachRegion = (feature, layer) => {
         const regionName = feature.properties.region;
-    
+
         layer.bindTooltip(regionName, {
-            pane: 'tooltipPane', 
-            direction: 'top', 
-            permanent: false, 
-            sticky: false, 
-            opacity: 0.9, 
-            className: 'custom-tooltip', 
+            pane: 'tooltipPane',
+            direction: 'top',
+            permanent: false,
+            sticky: false,
+            opacity: 0.9,
+            className: 'custom-tooltip',
         });
-    
+
         layer.on('mouseover', function (e) {
             this.openTooltip();
-        });
-    
-        layer.on('mouseout', function (e) {
-            this.closeTooltip();
+            setHoveredsTooltip(layer?.feature?.properties?.id)
+            console.log(hoveredsTooltip);
+            console.log("layer", layer)
         });
     };
-    
+
+    // useEffect(() => {
+    //     console.log("hoveredsTooltip : ", hoveredsTooltip);
+    // }, [hoveredsTooltip]);
+
     return (
         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
             <MapContainer
@@ -91,18 +95,18 @@ const LeafRegion = ({ regionId, onReturn, theme }) => {
                 whenCreated={mapInstance => {
                     mapRef.current = mapInstance;
                 }}
-                
+
             >
                 <TileLayer
-                    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"/>
+                    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}" />
                 {showAllRegions && Object.keys(regionDataMap).map((regionKey) => (
 
-                    <MarkerClusterGroup 
-                    key={regionKey} 
-                    chunkedLoading  
-                    showCoverageOnHover={false}
-                    spiderfyDistanceMultiplier={2}>
-                        
+                    <MarkerClusterGroup
+                        key={regionKey}
+                        chunkedLoading
+                        showCoverageOnHover={false}
+                        spiderfyDistanceMultiplier={2}>
+
                         {markersData[regionKey].results.map((address, index) => (
                             <Marker
                                 key={index}
@@ -118,9 +122,9 @@ const LeafRegion = ({ regionId, onReturn, theme }) => {
                 ))}
                 {!showAllRegions && region && (
                     <MarkerClusterGroup
-                     chunkedLoading
-                     showCoverageOnHover={false}
-                     spiderfyDistanceMultiplier={2}>
+                        chunkedLoading
+                        showCoverageOnHover={false}
+                        spiderfyDistanceMultiplier={2}>
 
                         {markersData[regionId].results.map((address, index) => (
                             <Marker
@@ -136,18 +140,23 @@ const LeafRegion = ({ regionId, onReturn, theme }) => {
                     </MarkerClusterGroup>
                 )}
                 {showAllRegions && Object.keys(regionDataMap).map((regionKey) => (
-                    <GeoJSON key={regionKey} data={regionDataMap[regionKey]} onEachFeature={onEachRegion}/>
+                    <GeoJSON key={regionKey} data={regionDataMap[regionKey]} onEachFeature={onEachRegion} />
                 ))}
-                {!showAllRegions && region && <GeoJSON data={region} onEachFeature={onEachRegion}/>}
+                {!showAllRegions && region && <GeoJSON data={region} onEachFeature={onEachRegion} />}
                 <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', flexDirection: 'column', gap: '10px', zIndex: '1000' }}>
                     <button onClick={onReturn} style={{ backgroundColor: theme.palette.secondary.light, border: 'none', padding: '10px', borderRadius: '5px', cursor: 'pointer' }}>
-                        <KeyboardReturnIcon style={{ fontSize: '40px', color: theme.palette.neutral[0] }}/>
+                        <KeyboardReturnIcon style={{ fontSize: '40px', color: theme.palette.neutral[0] }} />
                     </button>
                     <button onClick={toggleRegionsVisibility} style={{ backgroundColor: theme.palette.secondary.light, border: 'none', padding: '10px', borderRadius: '5px', cursor: 'pointer' }}>
-                        {showAllRegions ? <VisibilityOffIcon style={{ fontSize: '40px', color: theme.palette.neutral[0] }}/> : <VisibilityIcon style={{ fontSize: '40px', color: theme.palette.neutral[0] }}/>}
+                        {showAllRegions ? <VisibilityOffIcon style={{ fontSize: '40px', color: theme.palette.neutral[0] }} /> : <VisibilityIcon style={{ fontSize: '40px', color: theme.palette.neutral[0] }} />}
                     </button>
                 </div>
             </MapContainer>
+            {hoveredsTooltip && (
+                <div style={{ position: 'absolute', top: 0, right: 0, padding: '10px', backgroundColor: '#fff', zIndex: 999 }}>
+                    <RegionDataDisplay markersData={markersData[hoveredsTooltip]} />
+                </div>
+            )}
         </div>
     );
 };

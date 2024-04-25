@@ -9,8 +9,7 @@ export const crudApiSlice = apiSlice.injectEndpoints({
                 method: 'GET',
             }),
             transformResponse: (response) => {
-
-                return response.map((user, index) => ({ ...user, id: index + 1 }));
+                return response.map((user) => ({ ...user, id: user.UserId }));
             },
             providesTags: ['users'],
 
@@ -49,6 +48,13 @@ export const crudApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['users'],
           }),
+          getRoles: builder.query({
+            query: () => ({
+              url: '/users/roles',
+              method: 'GET',
+            }),
+            providesTags: ['roles'],
+          }),
     })
 });
 
@@ -57,5 +63,6 @@ export const {
     useCreateMutation,
     useUpdateMutation,
     useDeleteMutation,
-    useDeactivateMutation
+    useDeactivateMutation,
+    useGetRolesQuery
 } = crudApiSlice;

@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import {  Route, Routes } from "react-router-dom";
 import { themeSettings } from "theme";
 import Layout from "scenes/layout";
-import Admin from "scenes/admin/index.tsx";
+import UserManagement from "scenes/admin/index";
 import ClientProfile from "scenes/client_profile/clientProfile";
 import ClientList from "scenes/clients/clientList.tsx";
 import ClientsMap from "scenes/map/clientsMap";
@@ -19,10 +19,10 @@ function App() {
           <CssBaseline />
           <Routes>
             <Route element={<Layout />}>
-            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin" element={<UserManagement/>} />
             <Route path="/clientprofile" element={<ClientProfile />} />
             <Route path="/clients" element={<ClientList />} />
-            {/* <Route path="/map" element={<ClientsMap />} /> */}
+            <Route path="/map" element={<ClientsMap />} />
             {/* <Route path="/pg" element={<WidgetGeoMap />} /> */}
 
             </Route>

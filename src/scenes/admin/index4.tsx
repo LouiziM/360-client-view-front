@@ -19,6 +19,7 @@ import Switch from '@mui/material/Switch';
 import { alpha } from '@mui/material/styles';
 import { CustomTooltip } from 'scenes/client_profile/misc/customTooltip.tsx';
 import dayjs from 'dayjs';
+import TextField from '@mui/material/TextField';
 
 import {
   GridRowsProp,
@@ -351,28 +352,45 @@ const useFakeMutation = () => {
   };
 
 
+  const UsernameEditor: React.FC<GridEditCellPropsParams> = ({ value, ...props }) => {
+    const [username, setUsername] = useState(value);
+  
+    const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = event.target.value;
+      if (newValue.length <= 6) {
+        setUsername(newValue);
+        props.api.setEditCellValue({ id: props.id, field: 'username', value: newValue });
+      }
+    };
+  
+    return (
+      <TextField
+        value={username}
+        onChange={handleUsernameChange}
+        inputProps={{ maxLength: 6 }}
+      />
+    );
+  };
 
   const columns: GridColDef[] = [
     {
-      field: 'username', 
-      headerName: 'Utilisateur', 
-      type: 'string', 
-      flex: 1, 
+      field: 'username',
+      headerName: 'Utilisateur',
+      type: 'number',
+      flex: 1,
       editable: true,
       renderCell: ({ row }) => (
-        <CustomTooltip title={row.username} />
-      )
-    },
-    { 
-      field: 'pwd',   
-      headerName: 'Mot de passe',
-      type: 'string', 
-      flex: 1, 
-      editable: true,
-      renderCell: ({ row }) => (
-        <CustomTooltip title={row.pwd} />
-      )
-    },
+        <CustomTooltip title={isNaN(row.username) ? (row.username.length > 6 ? row.username.substring(0, 6) + '...' : row.username) : 'Invalid input'} />
+      ),
+      renderEditCell: (params) => {
+        if (isNaN(params.value)) {
+          return <UsernameEditor {...params} />;
+        } else {
+          return <div>Invalid input</div>;
+        }
+      },
+    }
+,    
     {
       field: 'lastLogin',
       headerName: 'Dernière connexion',

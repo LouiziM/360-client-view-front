@@ -15,6 +15,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { frFR } from "@mui/x-data-grid/locales";
 import { CustomTooltip } from 'scenes/client_profile/misc/customTooltip.tsx';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 const ODD_OPACITY = 0.4;
 
@@ -109,6 +112,7 @@ const Clients = () => {
       field: 'CUSTNO', 
       headerName: 'Nb', 
       type: 'number', 
+      align: 'center', 
       width: 80,
       renderCell: ({ row }) => (
         <CustomTooltip title={row.CUSTNO ? row.CUSTNO.toString() : ''} />
@@ -118,6 +122,7 @@ const Clients = () => {
       field: 'NAME2', 
       headerName: 'Nom', 
       type: 'string', 
+      align: 'center', 
       width: 150,
       renderCell: ({ row }) => (
         <CustomTooltip title={row.NAME2 ? row.NAME2 : ''} />
@@ -127,6 +132,7 @@ const Clients = () => {
       field: 'FIRSTNAME', 
       headerName: 'Prénom', 
       type: 'string', 
+      align: 'center', 
       width: 150,
       renderCell: ({ row }) => (
         <CustomTooltip title={row.FIRSTNAME ? row.FIRSTNAME : ''} />
@@ -136,6 +142,7 @@ const Clients = () => {
       field: 'CITY', 
       headerName: 'Ville', 
       type: 'string', 
+      align: 'center', 
       width: 150,
       renderCell: ({ row }) => (
         <CustomTooltip title={row.CITY ? row.CITY : ''} />
@@ -145,19 +152,21 @@ const Clients = () => {
       field: 'COUNTRY', 
       headerName: 'Pays', 
       type: 'string', 
+      align: 'center', 
       width: 120,
       renderCell: ({ row }) => (
         <CustomTooltip title={row.COUNTRY ? row.COUNTRY : ''} />
       )
     },
-    {
-      field: 'DATECRE',
-      headerName: 'Crée le',
-      type: 'date',
-      width: 110,
-      valueGetter: (params) => new Date(params.value),
+    { 
+      field: 'DATECRE', 
+      headerName: 'Crée le', 
+      type: 'date', 
+      align: 'center', 
+      width: 180, 
+      valueGetter: (params) => new Date(params.value), 
       renderCell: ({ row }) => (
-        <CustomTooltip title={row.DATECRE ? dayjs(row.DATECRE).format('DD/MM/YYYY') : ''} />
+        <CustomTooltip title={row.DATECRE ? dayjs.utc(row.DATECRE).format("YYYY-MM-DD à HH:mm:ss") : ''} />
       )
     },
     { 
@@ -165,6 +174,7 @@ const Clients = () => {
       headerName: 'Tel', 
       type: 'string', 
       width: 150,
+      align: 'center', 
       renderCell: ({ row }) => (
         <CustomTooltip title={row.PHONE ? row.PHONE : ''} />
       )
@@ -174,6 +184,7 @@ const Clients = () => {
       headerName: 'ZIP', 
       type: 'number', 
       width: 90,
+      align: 'center', 
       renderCell: ({ row }) => (
         <CustomTooltip title={row.ZIP ? row.ZIP.toString() : ''} />
       )
@@ -183,6 +194,7 @@ const Clients = () => {
       headerName: 'Adresse', 
       type: 'string', 
       flex: 1,
+      align: 'center', 
       renderCell: ({ row }) => (
         <CustomTooltip title={row.ADDRESS ? row.ADDRESS : ''} />
       )
@@ -222,6 +234,8 @@ const Clients = () => {
                   paginationModel: { page: 0, pageSize: 10 },
               },
               }}
+              pageSize={10}
+              rowHeight={70}
               pageSizeOptions={[10, 25, 100]}
               localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
               sx={{
