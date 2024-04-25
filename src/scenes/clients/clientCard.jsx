@@ -16,6 +16,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
 import Profil from '../../assets/client.png'
+import company from '../../assets/companyCard.png'
 
 const ClientCard = ({ data, theme, toggleDrawer }) => {
     const navigate = useNavigate();
@@ -86,7 +87,7 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
         } catch (error) {
             console.error("Failed to copy text to clipboard:", error);
         }
-    };    
+    };
 
     const handleCloseSnackbar = (event, reason) => {
         if (reason === 'clickaway') {
@@ -107,7 +108,6 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
     const onStop = (e, data) => {
         setPosition({ x: 0, y: data.y });
     };
-
 
     return (
         <Draggable axis="y" position={position} onStop={onStop} ref={draggableRef}>
@@ -149,8 +149,14 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
                     <Grid container alignItems={"center"}>
                         <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                             <Box className="photo-box">
-                                <img src={Profil} alt="Profile" style={{ width: "100%", height: 124, borderRadius: 15, objectFit: 'contain' }} />
+                                <img
+                                    src={data?.TYPECUST === "Societe" ? require('../../assets/companyCard.png') : require('../../assets/client.png')}
+                                    alt={data?.TYPECUST === "Societe" ? "Company" : "Profile"}
+                                    style={{ width: "100%", height: 124, borderRadius: 15, objectFit: 'contain' }}
+                                />
                             </Box>
+
+
                         </Grid>
                         <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
                             <Box>

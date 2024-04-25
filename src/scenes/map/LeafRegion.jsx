@@ -80,12 +80,15 @@ const LeafRegion = ({ regionId, onReturn, theme }) => {
             console.log(hoveredsTooltip);
             console.log("layer", layer)
         });
+        layer.on('mouseout', function (e) {
+            setHoveredsTooltip(null)
+     
+        });
     };
 
     // useEffect(() => {
     //     console.log("hoveredsTooltip : ", hoveredsTooltip);
     // }, [hoveredsTooltip]);
-
     return (
         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
             <MapContainer
@@ -151,11 +154,10 @@ const LeafRegion = ({ regionId, onReturn, theme }) => {
                         {showAllRegions ? <VisibilityOffIcon style={{ fontSize: '40px', color: theme.palette.neutral[0] }} /> : <VisibilityIcon style={{ fontSize: '40px', color: theme.palette.neutral[0] }} />}
                     </button>
                 </div>
+              
             </MapContainer>
             {hoveredsTooltip && (
-                <div style={{ position: 'absolute', top: 0, right: 0, padding: '10px', backgroundColor: '#fff', zIndex: 999 }}>
                     <RegionDataDisplay markersData={markersData[hoveredsTooltip]} />
-                </div>
             )}
         </div>
     );
