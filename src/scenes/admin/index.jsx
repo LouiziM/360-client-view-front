@@ -94,8 +94,12 @@ const UserManagement = () => {
   const handleSubmitEdit = async (e) => {
     e.preventDefault();
     try {
-
-      const res = await updateMutation(userData);
+      console.log(selectedRole)
+      const user = {
+        ...userData,
+        roles: selectedRole
+      }
+      const res = await updateMutation(user);
       if (res?.data?.message) {
         onHandleNormalSuccess(res?.data?.message);
         setUserData(initialUser);
@@ -116,133 +120,128 @@ const UserManagement = () => {
 
 
 
-  const columns = [
-    {
-      field: 'username',
-      headerName: 'Matricule',
-      flex: 1,
-      sortable: false,
-      align: 'center',
-      headerClassName: 'bold-weight',
-      renderCell: ({ row }) => {
-        const paddedUsername = row.username ? String(row.username).padStart(6, '0') : '-';
-        return (
-          <CustomTooltip title={paddedUsername}>
-            {paddedUsername}
-          </CustomTooltip>
-        );
-      }
-    },
-    {
-      field: 'roles',
-      headerName: 'Role',
-      flex: 1,
-      sortable: false,
-      align: 'center',
-      headerClassName: 'bold-weight',
-      renderCell: ({ row }) => {
-        let roleText = '-';
-        if (row.roles === 1) {
-          roleText = 'Administrateur';
-        } else if (row.roles === 2) {
-          roleText = 'Utilisateur';
-        }
-        return (
-          <CustomTooltip title={roleText}>
-            {roleText}
-          </CustomTooltip>
-        );
-      }
-    },
-    {
-      field: 'creationDate',
-      headerName: 'Date de création',
-      flex: 1,
-      sortable: false,
-      align: 'center',
-      headerClassName: 'bold-weight',
-      renderCell: ({ row }) => (
-        <CustomTooltip title={row.creationDate ? dayjs.utc(row.creationDate).format("YYYY-MM-DD à HH:mm:ss") : '-'}>
-          {row.creationDate ? dayjs.utc(row.creationDate).format("YYYY-MM-DD à HH:mm:ss") : '-'}
-        </CustomTooltip>
-      )
-    },
-    {
-      field: 'lastLogin',
-      headerName: 'Dernière connexion',
-      flex: 1,
-      sortable: false,
-      align: 'center',
-      headerClassName: 'bold-weight',
-      renderCell: ({ row }) => (
-        <CustomTooltip title={row.lastLogin ? dayjs.utc(row.lastLogin).format("YYYY-MM-DD à HH:mm:ss") : '-'}>
-          {row.lastLogin ? dayjs.utc(row.lastLogin).format("YYYY-MM-DD à HH:mm:ss") : '-'}
-        </CustomTooltip>
-      )
-    },
-    {
-      field: 'active',
-      headerName: 'Statut',
-      flex: 1,
-      sortable: false,
-      align: 'center',
-      headerClassName: 'bold-weight',
-      renderCell: ({ row }) => {
-        const handleSwitchChange = async (event) => {
-          const uId = row.id;
-          const { checked } = event.target;
-          try {
-            const res = await deactivateMutation({ id: uId, isActive: checked });
-            onHandleNormalSuccess(res?.data?.message);
-          } catch (error) {
-            onHandleNormalError(error?.response?.data?.message);
+    const columns = [
+        { 
+          field: 'username', 
+          headerName: 'Matricule', 
+          flex: 1, 
+          sortable: false, 
+          align: 'center', 
+          headerClassName: 'bold-weight', 
+          renderCell: ({ row }) => {
+            const paddedUsername = row.username ? String(row.username).padStart(6, '0') : '-';
+            return (
+              <CustomTooltip title={paddedUsername}>
+                {paddedUsername}
+              </CustomTooltip>
+            );
           }
-        };
-
-        return (
-          <Tooltip title={row.active ? 'Active' : 'Inactive'}>
-            <Switch
-              checked={row.active}
-              onChange={handleSwitchChange}
-              sx={{
-                '& .MuiSwitch-switchBase.Mui-checked': {
-                  color: theme.palette.secondary.light,
-                  '&:hover': {
-                    backgroundColor: alpha(theme.palette.secondary.light, 0.4),
-                  },
-                },
-                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                  backgroundColor: theme.palette.secondary.light,
-                },
-              }}
-            />
-          </Tooltip>
-        );
-      }
-    },
-    {
-      field: 'actions',
-      headerName: 'Action',
-      flex: 1,
-      sortable: false,
-      align: 'center',
-      headerClassName: 'bold-weight',
-      renderCell: ({ row }) => (
-        <Tooltip title="Modifier l'utilisateur" placement="top">
-          <IconButton onClick={() => {
-            setEditUser(true);
-            setUserData({ ...userData, ...row });
-            if (matriculeRef.current) {
-              matriculeRef.current.focus();
-            }
-          }}>
-            <EditIcon />
-          </IconButton>
-        </Tooltip>
-      )
-    }
-  ];
-
+        },
+        { 
+          field: 'roles', 
+          headerName: 'Role', 
+          flex: 1, 
+          sortable: false, 
+          align: 'center', 
+          headerClassName: 'bold-weight', 
+          renderCell: ({ row }) => {
+          
+            return (
+              <CustomTooltip title={row.role}>
+                {row.role}
+              </CustomTooltip>
+            );
+          }
+        },
+        { 
+          field: 'creationDate', 
+          headerName: 'Date de création', 
+          flex: 1, 
+          sortable: false, 
+          align: 'center', 
+          headerClassName: 'bold-weight', 
+          renderCell: ({ row }) => (
+            <CustomTooltip title={row.creationDate ? dayjs.utc(row.creationDate).format("YYYY-MM-DD à HH:mm:ss") : '-'}>
+              {row.creationDate ? dayjs.utc(row.creationDate).format("YYYY-MM-DD à HH:mm:ss") : '-'}
+            </CustomTooltip>
+          )
+        },
+        { 
+          field: 'lastLogin', 
+          headerName: 'Dernière connexion', 
+          flex: 1, 
+          sortable: false, 
+          align: 'center', 
+          headerClassName: 'bold-weight', 
+          renderCell: ({ row }) => (
+            <CustomTooltip title={row.lastLogin ? dayjs.utc(row.lastLogin).format("YYYY-MM-DD à HH:mm:ss") : '-'}>
+              {row.lastLogin ? dayjs.utc(row.lastLogin).format("YYYY-MM-DD à HH:mm:ss") : '-'}
+            </CustomTooltip>
+          )
+        },
+        { 
+          field: 'active', 
+          headerName: 'Statut', 
+          flex: 1, 
+          sortable: false, 
+          align: 'center', 
+          headerClassName: 'bold-weight', 
+          renderCell: ({ row }) => {
+            const handleSwitchChange = async (event) => {
+              const uId = row.id;
+              const { checked } = event.target;
+              try {
+                const res = await deactivateMutation({ id: uId, isActive: checked });
+                onHandleNormalSuccess(res?.data?.message);
+              } catch (error) {
+                onHandleNormalError(error?.response?.data?.message);
+              }
+            };
+    
+            return (
+              <Tooltip title={row.active ? 'Active' : 'Inactive'}>
+                <Switch
+                  checked={row.active}
+                  onChange={handleSwitchChange}
+                  sx={{
+                    '& .MuiSwitch-switchBase.Mui-checked': {
+                      color: theme.palette.secondary.light,
+                      '&:hover': {
+                        backgroundColor: alpha(theme.palette.secondary.light, 0.4),
+                      },
+                    },
+                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                      backgroundColor: theme.palette.secondary.light,
+                    },
+                  }}
+                />
+              </Tooltip>
+            );
+          }
+        },
+        { 
+          field: 'actions', 
+          headerName: 'Action', 
+          flex: 1, 
+          sortable: false, 
+          align: 'center', 
+          headerClassName: 'bold-weight', 
+          renderCell: ({ row }) => (
+            <Tooltip title="Modifier l'utilisateur" placement="top">
+              <IconButton onClick={() => {
+                setEditUser(true);
+                setUserData({ ...userData, ...row });
+                if (matriculeRef.current) {
+                  matriculeRef.current.focus();
+                }
+              }}>
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+          )
+        }
+    ];
+    
 
 
   return (
