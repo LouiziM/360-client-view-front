@@ -36,11 +36,11 @@ body,
 }
 
 
-.MuiInputLabel-root.MuiInputLabel-formControl.MuiInputLabel-animated.MuiInputLabel-shrink.MuiInputLabel-sizeMedium.MuiInputLabel-outlined,
+/* .MuiInputLabel-root.MuiInputLabel-formControl.MuiInputLabel-animated.MuiInputLabel-shrink.MuiInputLabel-sizeMedium.MuiInputLabel-outlined,
 .MuiFormLabel-root.MuiFormLabel-colorPrimary.MuiFormLabel-filled {
   color: rgba(0, 0, 0, 0.6);
   font-size: 16px;
   background-color: white; 
   width: 66px;
   text-align: center;
-}
+} */
