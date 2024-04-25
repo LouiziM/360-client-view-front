@@ -141,6 +141,7 @@ const MarketingCampaigns = ({ theme }) => {
         field: 'titre',
         headerName: 'Titre',
         flex: 1,
+        align:"center",
         renderCell: function render({ row }) {
           return (
             <CustomTooltip title={row.titre}>
@@ -155,6 +156,7 @@ const MarketingCampaigns = ({ theme }) => {
         field: 'marque',
         headerName: 'Marque',
         flex: 1,
+        align:"center",
         renderCell: function render({ row }) {
           return (
             <CustomTooltip title={row.marque}>
@@ -177,6 +179,7 @@ const MarketingCampaigns = ({ theme }) => {
       {
         field: 'type',
         headerName: 'Type',
+        align:"center",
         flex: 1,
         renderCell: function render({ row }) {
           return (
@@ -201,6 +204,7 @@ const MarketingCampaigns = ({ theme }) => {
         field: 'date',
         headerName: 'Date',
         flex: 1,
+        align:"center",
         renderCell: function render({ row }) {
           return (
             <CustomTooltip title={row.date}>
@@ -224,6 +228,7 @@ const MarketingCampaigns = ({ theme }) => {
         field: 'contenu',
         headerName: 'Contenu',
         flex: 1,
+        align:"center",
         renderCell: function render({ row }) {
           return (
             <CustomTooltip title={row.contenu}>

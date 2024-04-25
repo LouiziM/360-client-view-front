@@ -114,6 +114,7 @@ export default function SavTable({ theme }) {
       field: 'date', 
       headerName: 'Date de visite', 
       flex: 1,
+      align:"center",
       renderCell: (params) => (
         <CustomTooltip title={params.value}>
           <Typography
@@ -135,6 +136,7 @@ export default function SavTable({ theme }) {
       field: 'amount', 
       headerName: 'Montant dépensé', 
       flex: 1.1,
+      align:"center",
       renderCell: (params) => (
         <CustomTooltip title={params.value}>
           <Typography
@@ -156,6 +158,7 @@ export default function SavTable({ theme }) {
       field: 'satisfaction', 
       headerName: 'Satisfaction', 
       flex: 1, 
+      align:"center",
       renderCell: (params) => {
         return params.value ? <CheckCircleIcon style={{ color: 'green' }} /> : <CancelIcon style={{ color: 'red' }} />;
       }
@@ -164,6 +167,7 @@ export default function SavTable({ theme }) {
       field: 'site', 
       headerName: 'Site', 
       flex: 1,
+      align:"center",
       renderCell: (params) => (
         <CustomTooltip title={params.value}>
           <Typography

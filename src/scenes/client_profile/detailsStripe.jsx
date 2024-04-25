@@ -74,8 +74,8 @@ const DetailsStripe = ({ theme, data }) => {
       <Grid item xs={12} sm={12} md={4} order={query900 ? 1 : 0}>
         <Box display='flex' alignItems='center' justifyContent='center' flexDirection='column'>
           <img
-            src={require('../../assets/profile.png')}
-            alt="Image Client"
+            src={data?.data?.TYPECUST === "Societe" ? require('../../assets/company.png') : require('../../assets/profile.png')}
+            alt={data?.data?.TYPECUST === "Societe" ? "Image Societé" : "Image Client"}
             style={{
               width: "230px",
               height: "230px",
@@ -89,7 +89,7 @@ const DetailsStripe = ({ theme, data }) => {
       </Grid>
       <Grid item xs={12} sm={12} md={4} order={2}>
         {list3Data?.map((item, index) => (
-          <Grid item container spacing={4} key={index} width={"100%"} mt={'22px'} ml={0}> 
+          <Grid item container spacing={4} key={index} width={"100%"} mt={'22px'} ml={0}>
             <Grid item xs={query900 ? 4 : 5} sx={{ pl: '0 !important', pt: '0 !important' }}>
               <Typography variant="h5" fontWeight="bold" color={theme.palette.background.default}>
                 {item}
