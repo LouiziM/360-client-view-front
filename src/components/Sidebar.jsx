@@ -7,7 +7,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Typography,
   useTheme,
 } from "@mui/material";
 import {
@@ -18,22 +17,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logoImage from "assets/logo.jpg";
 import GroupsIcon from '@mui/icons-material/Groups';
-import MapIcon from '@mui/icons-material/Map';
-
-const navItems = [
-  {
-    text: "Admin",
-    icon: <AdminPanelSettingsOutlined sx={{ color: "#FFF" }} />,
-  },
-  {
-    text: "Clients",
-    icon: <GroupsIcon sx={{ color: "#FFF" }} />
-  },
-  // {
-  //   text: "Map",
-  //   icon: <MapIcon sx={{ color: "#FFF" }} />
-  // },
-];
+import { useSelector } from "react-redux";
+import { isAdmin } from "utils/Roles";
 
 const Sidebar = ({
   drawerWidth,
@@ -41,13 +26,30 @@ const Sidebar = ({
   setIsSidebarOpen,
   isNonMobile,
 }) => {
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const user = useSelector((state) => state.auth.user) || storedUser;
   const { pathname } = useLocation();
   const [active, setActive] = useState("");
   const navigate = useNavigate();
   const theme = useTheme();
 
+  const navItems = [
+    {
+      text: "Utilisateurs",
+      link: "/utilisateurs",
+      canAccess: isAdmin(user),
+      icon: <AdminPanelSettingsOutlined sx={{ color: theme.palette.white.first }} />,
+    },
+    {
+      text: "Clients",
+      link: "/clients",
+      canAccess: !isAdmin(user),
+      icon: <GroupsIcon sx={{ color: theme.palette.white.first }} />
+    }
+  ];
+
   useEffect(() => {
-    setActive(pathname.substring(1));
+    setActive(pathname);
   }, [pathname]);
 
   return (
@@ -61,8 +63,7 @@ const Sidebar = ({
           sx={{
             width: drawerWidth,
             "& .MuiDrawer-paper": {
-
-              backgroundColor: theme.palette.secondary[700],
+              backgroundColor: theme.palette.blue.first,
               boxSixing: "border-box",
               borderWidth: isNonMobile ? 0 : "2px",
               width: drawerWidth,
@@ -70,8 +71,6 @@ const Sidebar = ({
           }}
         >
           <Box width="100%">
-
-
             <Box
               mt={7}
               mb={3}
@@ -86,52 +85,38 @@ const Sidebar = ({
                 marginLeft: "10%"
               }}
             />
-
             <List>
-              {navItems.map(({ text, icon }) => {
-                if (!icon) {
-                  return (
-                    <Typography key={text} sx={{ m: "2.25rem 0 1rem 3rem" }}>
-                      {text}
-                    </Typography>
-                  );
-                }
-                const lcText = text.toLowerCase();
-
+              {navItems?.map((element, index) => {
                 return (
-                  <ListItem key={text} disablePadding>
-                    <ListItemButton
-                      onClick={() => {
-                        navigate(`/${lcText}`);
-                        setActive(lcText);
-                      }}
-                      sx={{
-                        color: "#FFF"
-                      }}
-                    >
-                      <ListItemIcon
-                        sx={{
-                          ml: "2rem",
-                          color: "#FFF"
-
-                        }}
-                      >
-                        {icon}
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={text}
-                        sx={{
-                          "& span": {
-                            fontWeight: active === lcText && "bold"
-                          }
-                        }}
-                      />
-                      {active === lcText && (
-                        <ChevronRightOutlined sx={{ ml: "auto" }} />
-                      )}
-                    </ListItemButton>
-                  </ListItem>
-                );
+                  <>
+                    {element?.canAccess &&
+                      <ListItem key={index} disablePadding>
+                        <ListItemButton
+                          onClick={() => {
+                            navigate(element?.link);
+                            setActive(element?.link);
+                          }}
+                          sx={{ color: theme.palette.white.first }}
+                        >
+                          <ListItemIcon sx={{ ml: "2rem", color: theme.palette.white.first }}>
+                            {element?.icon}
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={element?.text}
+                            sx={{
+                              "& span": {
+                                fontWeight: active === element?.link && "bold"
+                              }
+                            }}
+                          />
+                          {active === element?.link && (
+                            <ChevronRightOutlined sx={{ ml: "auto" }} />
+                          )}
+                        </ListItemButton>
+                      </ListItem>
+                    }
+                  </>
+                )
               })}
             </List>
           </Box>

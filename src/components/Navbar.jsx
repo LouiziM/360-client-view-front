@@ -1,8 +1,8 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import FlexBetween from "components/FlexBetween";
-import { AppBar, IconButton, InputBase, Toolbar } from "@mui/material";
-import { Menu as MenuIcon, Search } from "@mui/icons-material";
+import { AppBar, IconButton, Toolbar } from "@mui/material";
+import { Menu as MenuIcon } from "@mui/icons-material";
 import { logOut } from "../features/auth/authSlice";
 import { useTheme } from "@mui/system";
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -28,7 +28,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
         borderBottom: `1px solid ${theme.palette.divider}`,
       }}
     >
-      <Toolbar sx={{ justifyContent: "space-between", color: theme.palette.text.primary }}>
+      <Toolbar sx={{ justifyContent: "space-between" }}>
         {/* LEFT SIDE */}
         <FlexBetween>
           <IconButton onClick={() => setIsSidebarOpen(!isSidebarOpen)}>

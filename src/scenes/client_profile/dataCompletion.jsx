@@ -1,39 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Grid, Box, Typography } from '@mui/material';
-import { useGetCompletionQuery } from '../../features/state/clientSlice';
+import React from "react";
+import { Grid, Box, Typography, CircularProgress } from '@mui/material';
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
 
-const DataCompletion = ({ theme, client }) => {
-  const { data: completionData, isLoading, isError, isSuccess, error } = useGetCompletionQuery(client?.data?.CUSTNO);
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    if (isError) {
-      console.error("Error fetching completion data:", error);
-    }
-
-    if (completionData) {
-      const newData = [
-        {
-          label: 'Contact',
-          percentage: completionData?.Contact['Completion Ratio'],
-          missingFields: completionData?.Contact['Missing Fields']
-        },
-        {
-          label: 'Situation démographique',
-          percentage: completionData['Situation démographique']['Completion Ratio'],
-          missingFields: completionData['Situation démographique']['Missing Fields']
-        },
-        {
-          label: 'Situation géographique',
-          percentage: completionData['Situation géographique']['Completion Ratio'],
-          missingFields: completionData['Situation géographique']['Missing Fields']
-        }
-      ];
-      setData(newData);
-    }
-  }, [completionData, isError, error]);
-
+const DataCompletion = ({ theme, completion, isLoading }) => {
 
   const Metric = ({ center, bars }) => {
     return (
@@ -58,77 +27,87 @@ const DataCompletion = ({ theme, client }) => {
           p="20px"
           height="100%"
           style={{ borderRadius: '15px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
-          backgroundColor={theme.palette.primary.white}
+          backgroundColor={theme.palette.white.first}
         >
-          <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} gutterBottom>
+          <Typography variant="h5" fontWeight="bold" color={theme.palette.blue.first} gutterBottom>
             Complétude des données
           </Typography>
-          <hr style={{ border: `1px solid ${theme.palette.secondary.light}`, width: '100%' }} />
-          <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" margin={"20px 0 0 0"}>
-            {data?.map(({ label, percentage, missingFields }, index) => (
-              <Box key={index} display="flex" flexDirection="column" alignItems="center" justifyContent="space-between" width="30%">
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="center"
-                  width="100%"
-                >
+          <hr style={{ border: `1px solid ${theme.palette.blue.first}`, width: '100%' }} />
+          {isLoading ?
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="80%"
+            >
+              <CircularProgress sx={{ color: theme.palette.blue.first }} />
+            </Box> :
+            <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" margin={"20px 0 0 0"}>
+              {completion?.data?.map(({ label, percentage, missingFields }, index) => (
+                <Box key={index} display="flex" flexDirection="column" alignItems="center" justifyContent="space-between" width="30%">
                   <Box
                     display="flex"
+                    flexDirection="column"
                     alignItems="center"
-                    justifyContent="center"
-                    width={100}
-                    height={"120px"}
+                    width="100%"
                   >
-                    <ResponsiveRadialBar
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      width={100}
+                      height={"120px"}
+                    >
+                      <ResponsiveRadialBar
 
-                      // width={100}
-                      // height={120}
-                      valueFormat={(v) => `${v}%`}
-                      maxValue={100}
-                      startAngle={360}
-                      endAngle={0}
-                      cornerRadius={100}
-                      innerRadius={0.8}
-                      colors={[theme.palette.secondary.light]}
-                      transitionMode="startAngle"
-                      isInteractive={missingFields?.length > 0}
-                      data={[
-                        {
-                          id: missingFields?.map((field, index) => (
-                            <React.Fragment key={index}>
-                              {index === 0 ? '' : ' - '}
-                              {field}
-                              {index !== missingFields?.length - 1 && '\n'}
-                              {index == missingFields?.length - 1 && '\n'}
-                            </React.Fragment>
-                          )),
-                          data: [{
-                            x: <Box pr={2} display="flex" alignItems="center" flexDirection={"column"}>
-                              <Typography fontWeight="bold">Champs manquants</Typography>
-                              <hr style={{ width: "100%", borderBottom: '2px solid black' }} />
-                            </Box>
-                            , y: percentage
-                          }]
-                        }
-                      ]}
-                      layers={["tracks", "bars", Metric]}
-                    />
+                        // width={100}
+                        // height={120}
+                        valueFormat={(v) => `${v}%`}
+                        maxValue={100}
+                        startAngle={360}
+                        endAngle={0}
+                        cornerRadius={100}
+                        innerRadius={0.8}
+                        colors={[theme.palette.blue.first]}
+                        transitionMode="startAngle"
+                        isInteractive={missingFields?.length > 0}
+                        data={[
+                          {
+                            id: missingFields?.map((field, index) => (
+                              <React.Fragment key={index}>
+                                {index === 0 ? '' : ' - '}
+                                {field}
+                                {index !== missingFields?.length - 1 && '\n'}
+                                {index == missingFields?.length - 1 && '\n'}
+                              </React.Fragment>
+                            )),
+                            data: [{
+                              x: <Box pr={2} display="flex" alignItems="center" flexDirection={"column"}>
+                                <Typography fontWeight="bold">Champs manquants</Typography>
+                                <hr style={{ width: "100%", borderBottom: '2px solid black' }} />
+                              </Box>
+                              , y: percentage
+                            }]
+                          }
+                        ]}
+                        layers={["tracks", "bars", Metric]}
+                      />
+                    </Box>
                   </Box>
+                  <Typography
+                    height="40px"
+                    variant="h6"
+                    fontWeight="bold"
+                    color={theme.palette.blue.first}
+                    textAlign="center"
+                  >
+                    {label}
+                  </Typography>
                 </Box>
-                <Typography
-                  height="40px"
-                  variant="h6"
-                  fontWeight="bold"
-                  color={theme.palette.secondary.light}
-                  textAlign="center"
-                >
-                  {label}
-                </Typography>
-              </Box>
 
-            ))}
-          </Box>
+              ))}
+            </Box>
+          }
         </Box>
       </Grid>
     </Grid>

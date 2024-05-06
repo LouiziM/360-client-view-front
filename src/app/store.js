@@ -1,39 +1,35 @@
-import { configureStore, createSlice, getDefaultMiddleware } from "@reduxjs/toolkit";
+import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { apiSlice } from "./api/apiSlice";
+
 import authReducer from '../features/auth/authSlice';
+import clientSelectedReducer from '../features/state/clientSelectedSlice';
+
 import { persistStore, persistReducer } from "redux-persist";
-import storageSession from "redux-persist/lib/storage/session";
+import storage from "redux-persist/lib/storage/session";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { clientSlice } from "features/state/clientSlice";
+import { clientApiSlice } from "../features/state/clientApiSlice";
 
 // Configuration for redux-persist
 const persistConfig = {
-  key: "root",
-  storage: storageSession,
+  key: "auth",
+  storage: storage,
 };
 
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 
-// Create the globalSlice reducer
-const globalSlice = createSlice({
-  name: "global",
-  initialState: {
-    mode: "light",
-   
-  },
-  reducers: {
-    setMode: (state) => {
-      state.mode = state.mode === "light" ? "dark" : "light";
-    },
-  },
-});
+const persistConfigClientSelected = {
+  key: "clientSelected",
+  storage: storage,
+};
+
+const persistedClientSelectedReducer = persistReducer(persistConfigClientSelected, clientSelectedReducer);
 
 // Combine the reducers
 const rootReducer = {
   [apiSlice.reducerPath]: apiSlice.reducer,
   auth: persistedAuthReducer,
-  global: globalSlice.reducer, 
-  [clientSlice.reducerPath]: clientSlice.reducer, 
+  clientSelected: persistedClientSelectedReducer,
+  [clientApiSlice.reducerPath]: clientApiSlice.reducer, 
 };
 
 const combinedMiddleware = [
@@ -52,6 +48,3 @@ setupListeners(store.dispatch);
 
 // Create the persistor for redux-persist
 export const persistor = persistStore(store);
-
-// Export setMode action creator
-export const { setMode } = globalSlice.actions;

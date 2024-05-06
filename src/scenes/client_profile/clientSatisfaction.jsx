@@ -17,15 +17,15 @@ const ClientSatisfaction = ({ theme }) => {
     let iconMarginTop = '1rem'; 
     switch (satisfaction) {
       case 1:
-        return <SentimentVeryDissatisfiedIcon style={{ fontSize: iconSize, color: '#00449C', marginTop: iconMarginTop }} />;
+        return <SentimentVeryDissatisfiedIcon style={{ fontSize: iconSize, color: theme.palette.blue.first, marginTop: iconMarginTop }} />;
       case 2:
-        return <SentimentDissatisfiedIcon style={{ fontSize: iconSize, color: '#00449C', marginTop: iconMarginTop }} />;
+        return <SentimentDissatisfiedIcon style={{ fontSize: iconSize, color: theme.palette.blue.first, marginTop: iconMarginTop }} />;
       case 3:
-        return <SentimentNeutralIcon style={{ fontSize: iconSize, color: '#00449C', marginTop: iconMarginTop }} />;
+        return <SentimentNeutralIcon style={{ fontSize: iconSize, color: theme.palette.blue.first, marginTop: iconMarginTop }} />;
       case 4:
-        return <SentimentSatisfiedAltIcon  style={{ fontSize: iconSize, color: '#00449C', marginTop: iconMarginTop }} />;
+        return <SentimentSatisfiedAltIcon  style={{ fontSize: iconSize, color: theme.palette.blue.first, marginTop: iconMarginTop }} />;
       case 5:
-        return <SentimentVerySatisfiedIcon  style={{ fontSize: iconSize, color: '#00449C', marginTop: iconMarginTop }} />;
+        return <SentimentVerySatisfiedIcon  style={{ fontSize: iconSize, color: theme.palette.blue.first, marginTop: iconMarginTop }} />;
       default:
         return null;
     }
@@ -35,7 +35,7 @@ const ClientSatisfaction = ({ theme }) => {
   const renderStars = () => {
     const stars = [];
     for (let i = 0; i < satisfaction; i++) {
-      stars.push(<Star key={i} style={{ fontSize: '2.5rem', color: theme.palette.secondary.light }} />);
+      stars.push(<Star key={i} style={{ fontSize: '2.5rem', color: theme.palette.blue.first }} />);
     }
     return stars;
   };
@@ -47,20 +47,20 @@ const ClientSatisfaction = ({ theme }) => {
         height="100%"
         p="20px"
         style={{ borderRadius: '15px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
-        backgroundColor={theme.palette.primary.white}
+        backgroundColor={theme.palette.white.first}
       >
-        <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} gutterBottom>
+        <Typography variant="h5" fontWeight="bold" color={theme.palette.blue.first} gutterBottom>
           Satisfaction
         </Typography>
-        <hr style={{ border: `1px solid ${theme.palette.secondary.light}`, marginBottom: "20px" }} />
+        <hr style={{ border: `1px solid ${theme.palette.blue.first}`, marginBottom: "20px" }} />
         <Grid container direction="column" height={"88%"}>
           <Box textAlign={"center"}>{renderSatisfactionIcon()}</Box>
           <Box display="flex" marginBottom="10px" marginTop="30px" justifyContent={"center"}>
             {renderStars()}
           </Box>
           <Box marginTop={"auto"} display="flex" justifyContent={"space-between"}>
-            <Typography textAlign="center" fontWeight="bold" variant="h5" color={theme.palette.secondary.light}>Enquêtes: {surveys}</Typography>
-            <Typography textAlign="center" fontWeight="bold" variant="h5" marginLeft="20px" color={theme.palette.secondary.light}>Réclamations: {complaints}</Typography>
+            <Typography textAlign="center" fontWeight="bold" variant="h5" color={theme.palette.blue.first}>Enquêtes: {surveys}</Typography>
+            <Typography textAlign="center" fontWeight="bold" variant="h5" marginLeft="20px" color={theme.palette.blue.first}>Réclamations: {complaints}</Typography>
           </Box>
         </Grid>
       </Box>

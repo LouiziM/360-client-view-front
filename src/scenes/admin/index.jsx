@@ -29,7 +29,7 @@ const UserManagement = () => {
 
   const [editUser, setEditUser] = useState(false);
   const [userData, setUserData] = useState(initialUser);
-  const { data: users = [] } = useGetAllUsersQuery();
+  const { data: users = [], isLoading } = useGetAllUsersQuery();
   const [selectedRole, setSelectedRole] = useState('');
   const { data: rolesList = [] } = useGetRolesQuery();
 
@@ -205,13 +205,13 @@ const UserManagement = () => {
                   onChange={handleSwitchChange}
                   sx={{
                     '& .MuiSwitch-switchBase.Mui-checked': {
-                      color: theme.palette.secondary.light,
+                      color: theme.palette.blue.first,
                       '&:hover': {
-                        backgroundColor: alpha(theme.palette.secondary.light, 0.4),
+                        backgroundColor: alpha(theme.palette.blue.first, 0.4),
                       },
                     },
                     '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                      backgroundColor: theme.palette.secondary.light,
+                      backgroundColor: theme.palette.blue.first,
                     },
                   }}
                 />
@@ -267,14 +267,14 @@ const UserManagement = () => {
                     }}
                     inputRef={matriculeRef}
                     type="tel"
-                    size="medium"
                   />
                 </Grid>
                 <Grid item xs={12} md={3} sm={6}>
-                  <FormControl fullWidth size="medium">
-                    <InputLabel id="select-label">Role:</InputLabel>
+                  <FormControl fullWidth>
+                    <InputLabel id="role-label">Rôle</InputLabel>
                     <Select
-                      labelId="select-label"
+                      labelId="role-label"
+                      label="Rôle"
                       value={selectedRole}
                       onChange={(event) => setSelectedRole(event.target.value)}
                       required
@@ -295,11 +295,11 @@ const UserManagement = () => {
                       mr={1}
                       sx={{
                         height: '50px',
-                        backgroundColor: theme.palette.secondary.light,
-                        color: theme.palette.primary.white,
+                        backgroundColor: theme.palette.blue.first,
+                        color: theme.palette.white.first,
                         fontWeight: 'bold',
                         "&:hover": {
-                          backgroundColor: theme.palette.secondary.light,
+                          backgroundColor: theme.palette.blue.first,
                         }
                       }}
                     >
@@ -316,11 +316,11 @@ const UserManagement = () => {
                         mr={2}
                         sx={{
                           height: '50px',
-                          backgroundColor: theme.palette.secondary.light,
-                          color: theme.palette.primary.white,
+                          backgroundColor: theme.palette.blue.first,
+                          color: theme.palette.white.first,
                           fontWeight: 'bold',
                           "&:hover": {
-                            backgroundColor: theme.palette.secondary.light,
+                            backgroundColor: theme.palette.blue.first,
                           }
                         }}
                       >
@@ -338,11 +338,11 @@ const UserManagement = () => {
                         mr={1}
                         sx={{
                           height: '50px',
-                          backgroundColor: theme.palette.secondary.light,
-                          color: theme.palette.primary.white,
+                          backgroundColor: theme.palette.blue.first,
+                          color: theme.palette.white.first,
                           fontWeight: 'bold',
                           "&:hover": {
-                            backgroundColor: theme.palette.secondary.light,
+                            backgroundColor: theme.palette.blue.first,
                           }
                         }}
                       >
@@ -361,7 +361,7 @@ const UserManagement = () => {
                 rows={users}
                 columns={columns}
                 autoHeight
-                loading={users.length === 0}
+                loading={isLoading}
                 pageSize={10}
                 rowHeight={50}
                 rowsPerPageOptions={[10, 25, 100]}

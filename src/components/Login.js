@@ -1,23 +1,30 @@
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setCredentials } from '../features/auth/authSlice';
 import { useLoginMutation } from '../features/auth/authApiSlice';
-
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
+import SatisfactionClient1 from '../assets/satisfaction_client_1.png';
+import SatisfactionClient2 from '../assets/satisfaction_client_2.png';
+import RelationClient from '../assets/relation_client.png';
+import InformationClient from '../assets/information_client.png';
+import { Grid, useTheme } from '@mui/material';
+import { isAdmin } from 'utils/Roles';
+import Cookies from 'js-cookie';
 
 const Login = () => {
+
+  //Images Functionality
+  const images = [SatisfactionClient1, SatisfactionClient2, RelationClient, InformationClient];
+  const [imageLogin, setImageLogin] = useState(0);
+
+  //Login Functionality
+  const theme = useTheme();
   const userRef = useRef();
   const errRef = useRef();
   const [user, setUser] = useState('');
@@ -30,11 +37,12 @@ const Login = () => {
   const [remember, setRemember] = useState(false);
 
   const handleRememberMeChange = (e) => setRemember(e.target.checked);
-  const storedToken = localStorage.getItem("authToken");
-  if(storedToken) navigate('/clients');
 
   useEffect(() => {
     userRef.current && userRef.current.focus();
+    sessionStorage.clear();
+    localStorage.clear();
+    Cookies.remove('jwt');
   }, []);
 
   useEffect(() => {
@@ -43,16 +51,13 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       const userData = await login({ user, pwd }).unwrap();
-      console.log("User Data:", userData);
-      console.log("Remember Me:", remember);
-  
-      dispatch(setCredentials({ ...userData, user, remember }));
+      dispatch(setCredentials({ ...userData, remember }));
       setUser('');
       setPwd('');
-      navigate('/clients');
+      navigate(isAdmin(userData?.user) ? '/utilisateurs' : '/clients');
     } catch (err) {
       if (!err?.originalStatus) {
         setErrMsg('Aucune réponse du serveur');
@@ -66,56 +71,83 @@ const Login = () => {
       errRef.current && errRef.current.focus();
     }
   };
-  
+
 
   const handleUserInput = (e) => setUser(e.target.value);
 
   const handlePwdInput = (e) => setPwd(e.target.value);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setImageLogin((prev) => (prev + 1) % images?.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <Container component="main" maxWidth="xs" sx={{ maxHeight: '100vh', overflowY: 'auto' }}>
-      <CssBaseline />
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Connexion
+    <Grid container spacing={0} sx={{
+      height: "100vh",
+      overflow: "hidden",
+      '@media (max-width: 900px)': {
+        overflow: 'inherit'
+      }
+    }}>
+      <Grid item md={7} xs={12} sx={{
+        '@media (max-width: 900px)': {
+          display: "none"
+        }
+      }}>
+        <img src={images[imageLogin]} alt={imageLogin} width={"100%"} height={"100%"} style={{ objectFit: "cover" }} />
+      </Grid>
+      <Grid item md={5} xs={12} sx={{
+        display: "flex",
+        justifyContent: "center",
+        flexDirection: "column",
+        alignItems: "center"
+      }}>
+        <Typography component="h1" variant="h5" sx={{
+          fontWeight: "bold",
+          fontSize: "clamp(32px, 4vw, 40px)",
+          color: theme.palette.blue.first,
+          textAlign: "center"
+        }}>
+          Customer Data Profile
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <Box component={"form"} onSubmit={handleSubmit} sx={{ ml: 4, mr: 4, mt: 10 }}>
           <TextField
-            margin="normal"
+            variant="outlined"
             required
             fullWidth
-            id="username"
-            label="Nom d'utilisateur"
+            type="tel"
+            id="matricule"
+            label="Matricule"
+            name="matricule"
             ref={userRef}
             value={user}
             onChange={handleUserInput}
-            autoComplete="off"
+            inputProps={{
+              maxLength: 6
+            }}
+            sx={{ mb: 4 }}
           />
 
           <TextField
-            margin="normal"
+            variant="outlined"
             required
             fullWidth
+            name="password"
             id="password"
             label="Mot de passe"
             type="password"
             onChange={handlePwdInput}
             value={pwd}
+            sx={{ mb: 2 }}
           />
 
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" onChange={handleRememberMeChange} />}
             label="Se souvenir de moi"
+            sx={{ mb: 2 }}
           />
 
           <Typography variant="body2" color="error">
@@ -126,13 +158,18 @@ const Login = () => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{
+              backgroundColor: theme.palette.blue.first,
+              height: 45,
+              mb: 10
+            }}
           >
             Se connecter
           </Button>
-        </form>
-      </Box>
-    </Container>
+          <Typography component="h5" variant="h5" textAlign={"center"} color={theme.palette.gray.second}>Créée par AutoHall 2024.</Typography>
+        </Box>
+      </Grid>
+    </Grid >
   );
 };
 

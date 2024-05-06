@@ -1,21 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 
-// Load token from storage on application start
-const storedToken = localStorage.getItem("authToken");
-
 const authSlice = createSlice({
   name: "auth",
-  initialState: { user: null, token: storedToken || null },
+  initialState: { user: null, token: null },
   reducers: {
     setCredentials: (state, action) => {
-      const { user, accessToken ,remember} = action.payload;
+      const { user, accessToken, remember } = action.payload;
       state.user = user;
       state.token = accessToken;
-      
+
       // Persist token in storage
-      if(remember===true){
-              localStorage.setItem("authToken", accessToken);
+      if (remember === true) {
+        localStorage.setItem("authToken", accessToken);
+        localStorage.setItem("user", JSON.stringify(user));
       }
     },
     logOut: (state) => {

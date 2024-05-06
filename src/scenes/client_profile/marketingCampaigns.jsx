@@ -10,26 +10,27 @@ const ODD_OPACITY = 0.4;
 
 const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   [`& .${gridClasses.row}.even`]: {
-    backgroundColor: theme.palette.secondary.faint,
+    backgroundColor: theme.palette.blue.second,
     '&:hover, &.Mui-hovered': {
-      backgroundColor: alpha(theme.palette.primary.faint, ODD_OPACITY),
+      backgroundColor: alpha(theme.palette.gray.second, ODD_OPACITY),
       '@media (hover: none)': {
         backgroundColor: 'transparent',
       },
     },
     '&.Mui-selected': {
       backgroundColor: alpha(
-        theme.palette.primary.faint,
+        theme.palette.gray.second,
         ODD_OPACITY,
       ),
       '&:hover, &.Mui-hovered': {
         backgroundColor: alpha(
-          theme.palette.primary.faint,
+          theme.palette.gray.second,
           ODD_OPACITY
         ),
+        // Reset on touch devices, it doesn't add specificity
         '@media (hover: none)': {
           backgroundColor: alpha(
-            theme.palette.primary.faint,
+            theme.palette.gray.second,
             ODD_OPACITY
           ),
         },
@@ -39,12 +40,12 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   [`& .${gridClasses.row}.odd`]: {
     '&.Mui-selected': {
       backgroundColor: alpha(
-        theme.palette.primary.faint,
+        theme.palette.gray.second,
         ODD_OPACITY,
       ),
     },
     '&:hover, &.Mui-hovered': {
-      backgroundColor: alpha(theme.palette.primary.faint, ODD_OPACITY),
+      backgroundColor: alpha(theme.palette.gray.second, ODD_OPACITY),
       '@media (hover: none)': {
         backgroundColor: 'transparent',
       },
@@ -66,10 +67,6 @@ const MarketingCampaigns = ({ theme }) => {
   const defaultDataColors = ["#3f51b5", "#4caf50", "#00a7c4"];
   const [dataColors, setDataColors] = useState(defaultDataColors);
   const [hoveredIndex, setHoveredIndex] = useState(null);
-  const [showChart, setShowChart] = useState(true);
-  const toggleChart = () => {
-    setShowChart((prevShowChart) => !prevShowChart);
-  };
 
   const data = [
     {
@@ -280,15 +277,15 @@ const MarketingCampaigns = ({ theme }) => {
         height="100%"
         p="20px"
         style={{ borderRadius: '15px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)' }}
-        backgroundColor={theme.palette.primary.white}
+        backgroundColor={theme.palette.white.first}
         display="flex"
         flexDirection="column"
         position="relative"
       >
-        <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} >
+        <Typography variant="h5" fontWeight="bold" color={theme.palette.blue.first} >
           Campagnes marketing
         </Typography>
-        <hr style={{ border: `1px solid ${theme.palette.secondary.light}`, width: '100%', marginBottom: "20px" }} />
+        <hr style={{ border: `1px solid ${theme.palette.blue.first}`, width: '100%', marginBottom: "20px" }} />
 
         <Box onMouseLeave={() => resetColors()}>
           <Grid container spacing={2} position={"relative"}>
@@ -324,7 +321,7 @@ const MarketingCampaigns = ({ theme }) => {
               <Legend />
             </Grid>
             <Grid item xs={12} sm={12} md={8} mt={{ xl:0, lg: 0, md: 0, sm: "90px", xs: "90px" }}>
-              <Typography variant="h5" fontWeight="bold" color={theme.palette.secondary.light} marginBottom={"20px"} textAlign={"center"}>
+              <Typography variant="h5" fontWeight="bold" color={theme.palette.blue.first} marginBottom={"20px"} textAlign={"center"}>
                 Historique de participation aux campagnes
               </Typography>
               <StripedDataGrid

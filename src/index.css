@@ -7,6 +7,8 @@ body,
   height: 100%;
   width: 100%;
   font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 ::-webkit-scrollbar {
@@ -29,18 +31,3 @@ body,
   display: flex;
   justify-content: center;
 }
-.MuiFormLabel-root.MuiInputLabel-root.MuiInputLabel-formControl.MuiInputLabel-animated.MuiInputLabel-sizeBig.MuiInputLabel-outlined.MuiFormLabel-colorPrimary.Mui-required.MuiInputLabel-root.MuiInputLabel-formControl.MuiInputLabel-animated.MuiInputLabel-sizeBig.MuiInputLabel-outlined {
-  color: rgba(0, 0, 0, 0.6);
-  font-size: 16px;
-  width: 88px;
-}
-
-
-/* .MuiInputLabel-root.MuiInputLabel-formControl.MuiInputLabel-animated.MuiInputLabel-shrink.MuiInputLabel-sizeMedium.MuiInputLabel-outlined,
-.MuiFormLabel-root.MuiFormLabel-colorPrimary.MuiFormLabel-filled {
-  color: rgba(0, 0, 0, 0.6);
-  font-size: 16px;
-  background-color: white; 
-  width: 66px;
-  text-align: center;
-} */

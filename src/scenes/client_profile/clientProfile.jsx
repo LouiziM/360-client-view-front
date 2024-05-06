@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import FlexBetween from "components/FlexBetween";
 import Header from "components/Header";
 import {
   DownloadOutlined,
-  ExpandCircleDown,
 } from "@mui/icons-material";
 import {
   Grid,
@@ -11,7 +10,6 @@ import {
   Button,
   useTheme,
 } from "@mui/material";
-
 import DetailsStripe from "./detailsStripe";
 import DataCompletion from "./dataCompletion";
 import FinancialData from "./financialDetails";
@@ -19,28 +17,29 @@ import ClientPark from "./clientPark";
 import SavTable from "./savTable";
 import ClientSatisfaction from "./clientSatisfaction";
 import MarketingCampaigns from "./marketingCampaigns";
-import { useLocation } from 'react-router-dom';
+import { useGetCompletionQuery } from 'features/state/clientApiSlice';
+import { useSelector } from 'react-redux';
 
 const ClientProfile = () => {
   const theme = useTheme();
+  const clientSelected = useSelector((state) => state.clientSelected.clientSelected);
 
-  const location = useLocation();
-  const { state } = location;
+  const { data: completion, isLoading } = useGetCompletionQuery(clientSelected?.CUSTNO);
 
   return (
-    <Box p="1.5rem 2.5rem" position="relative" bgcolor={"#F2F2F2"}>
+    <Box p="1.5rem 2.5rem" position="relative" bgcolor={theme.palette.gray.first}>
       <FlexBetween>
         <Header title="Profil client" />
         <Box>
           <Button
             sx={{
-              backgroundColor: theme.palette.secondary.light,
-              color: theme.palette.background.alt,
+              backgroundColor: theme.palette.blue.first,
+              color: theme.palette.white.first,
               fontSize: "14px",
               fontWeight: "bold",
               padding: "10px 20px",
               "&:hover": {
-                backgroundColor: theme.palette.secondary.light
+                backgroundColor: theme.palette.blue.first
               }
             }}
           >
@@ -52,20 +51,20 @@ const ClientProfile = () => {
 
       {/* Render components when isLoading is false */}
       <Box mt={"24px"}>
-        <DetailsStripe theme={theme} data={state} />
+        <DetailsStripe theme={theme} clientSelected={clientSelected} />
       </Box>
 
       <Box mt={"24px"}>
         <Grid container spacing={3}>
-          <DataCompletion theme={theme} client={state} />
-          <FinancialData theme={theme} />
+          <DataCompletion theme={theme} completion={completion} isLoading={isLoading} />
+          <FinancialData theme={theme} completion={completion} clientSelected={clientSelected} />
         </Grid>
       </Box>
 
       <Box mt={"24px"}>
         <Grid container spacing={3}>
-          <ClientPark theme={theme} />
-          <SavTable theme={theme} />
+          <ClientPark theme={theme} clientSelected={clientSelected} />
+          <SavTable theme={theme} clientSelected={clientSelected} />
         </Grid>
       </Box>
 

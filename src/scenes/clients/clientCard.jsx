@@ -1,73 +1,31 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Grid, Box, Typography, Button, Accordion, AccordionSummary, AccordionDetails, IconButton } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Grid, Box, Typography, Button, IconButton } from '@mui/material';
+import TransgenderIcon from '@mui/icons-material/Transgender';
+import ApartmentIcon from '@mui/icons-material/Apartment';
 import DetailsIcon from '@mui/icons-material/Details';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import HomeIcon from '@mui/icons-material/Home';
 import FaxIcon from '@mui/icons-material/Fax';
-import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
-import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
-import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import CloseIcon from '@mui/icons-material/Close';
 import Draggable from 'react-draggable';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
-import Profil from '../../assets/client.png'
-import company from '../../assets/companyCard.png'
+import { useDispatch } from 'react-redux';
+import { setClientSelected } from 'features/state/clientSelectedSlice';
 
 const ClientCard = ({ data, theme, toggleDrawer }) => {
     const navigate = useNavigate();
-
-    const handleDetailsClick = () => {
-        navigate('/clientprofile', { state: { data } });
-
-    };
-
-    const contact = {
-        name: 'John Doe',
-        company: 'XYZ Corporation',
-        position: 'CEO',
-        manager: 'Jane Smith',
-        phone: '+1234567890',
-        email: 'john.doe@example.com',
-        address: '123 Main St, Anytown, USA',
-        image: 'https://via.placeholder.com/150',
-        opportunities: [
-            { name: 'Opportunity 1', price: '$1000' },
-            { name: 'Opportunity 2', price: '$2000' },
-        ],
-        activities: [
-            { name: 'Meeting with client', date: '2024-03-18' },
-            { name: 'Follow-up call', date: '2024-03-17' },
-
-        ],
-    };
-
-    const renderCustomOpportunities = () => {
-        return contact.opportunities.map((item, idx) => (
-            <div className='opportunities' key={idx}>
-                <span className='value'>{item.name}</span>
-                <br />
-                <span className='value black small'>{item.price}</span>
-            </div>
-        ));
-    };
-
-    const renderCustomActivities = () => {
-        return contact.activities.map((activity, idx) => (
-            <div key={idx}>
-                <span>{activity.name}</span>
-                <span>{activity.date}</span>
-            </div>
-        ));
-    };
+    const dispatch = useDispatch();
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const draggableRef = useRef(null);
-
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+    const handleDetailsClick = () => {
+        navigate('/clientprofile');
+        dispatch(setClientSelected(data));
+    };
 
     const copyToClipboard = async (copyArg) => {
         try {
@@ -93,7 +51,6 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
         if (reason === 'clickaway') {
             return;
         }
-
         setSnackbarOpen(false);
     };
 
@@ -108,6 +65,19 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
     const onStop = (e, data) => {
         setPosition({ x: 0, y: data.y });
     };
+
+    const handleGender = (gender) => {
+        switch (gender) {
+            case 'None':
+                return '-';
+            case 'Male':
+                return 'Masculin';
+            case 'Female':
+                return 'Féminin';
+            default:
+                return '-';
+        }
+    }
 
     return (
         <Draggable axis="y" position={position} onStop={onStop} ref={draggableRef}>
@@ -133,11 +103,11 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
                     </IconButton>
                     <Typography variant="h5" fontWeight="bold" gutterBottom>
                         <Box>
-                            <Typography variant="h5" fontWeight="bold" gutterBottom onClick={() => copyToClipboard(`${data?.FIRSTNAME || ' '} ${data?.NAME2 || ' '}`)}>
-                                {`${data?.CIVILITY || ''}${data?.FIRSTNAME || ''} ${data?.NAME2 || ''}`}
+                            <Typography variant="h5" color={theme.palette.blue.first} fontWeight="bold" gutterBottom onClick={() => copyToClipboard(`${data?.FIRSTNAME || ''} ${data?.NAME2 || ''}`)}>
+                                {`${data?.CIVILITY ? data?.CIVILITY + '.' : ''} ${data?.FIRSTNAME || ''} ${data?.NAME2 || ''}`}
                             </Typography>
                             {data?.NATIONALITY &&
-                                <Typography variant="body2" component="span" style={{ fontSize: 'smaller', color: 'grey' }} onClick={() => copyToClipboard(`${data?.NATIONALITY && data?.NATIONALITY}`)}>
+                                <Typography variant="body2" component="span" style={{ fontSize: 'smaller', color: 'grey' }} onClick={() => copyToClipboard(`${data?.NATIONALITY || ''}`)}>
                                     {`${data?.NATIONALITY || ''}`}
                                 </Typography>
                             }
@@ -149,11 +119,19 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
                     <Grid container alignItems={"center"}>
                         <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                             <Box className="photo-box">
-                                <img
-                                    src={data?.TYPECUST === "Societe" ? require('../../assets/companyCard.png') : require('../../assets/client.png')}
-                                    alt={data?.TYPECUST === "Societe" ? "Company" : "Profile"}
-                                    style={{ width: "100%", height: 124, borderRadius: 15, objectFit: 'contain' }}
-                                />
+                                {data?.TYPECUST ?
+                                    <img
+                                        src={data?.TYPECUST === "Particuliers" ? require('../../assets/profileColored.png') : require('../../assets/companyColored.png')}
+                                        alt={data?.TYPECUST === "Particuliers" ? "Profile" : "Société"}
+                                        style={{ width: "100%", height: 124, borderRadius: 15, objectFit: 'contain' }}
+                                    />
+                                    :
+                                    <img
+                                        src={require('../../assets/client.png')}
+                                        alt={"Profile"}
+                                        style={{ width: "100%", height: 124, borderRadius: 15, objectFit: 'contain' }}
+                                    />
+                                }
                             </Box>
 
 
@@ -161,42 +139,59 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
                         <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
                             <Box>
                                 <Typography sx={{ display: 'flex', alignItems: 'center' }} >
-                                    <AssuredWorkloadIcon sx={{ marginRight: '.7rem', marginLeft: '.3rem' }} />
-                                    Entreprise
+                                    <TransgenderIcon sx={{ marginRight: '.7rem', marginLeft: '.3rem', color: theme.palette.blue.first }} />
+                                    Sexe
                                 </Typography>
-                                <Typography sx={{ display: 'flex', alignItems: 'center', marginLeft: '2rem', color: theme.palette.secondary.light }} onClick={() => copyToClipboard(`${data?.ENTREPRISE || ' '}`)}>
-                                    {`${data?.ENTREPRISE || '-'}`}
+                                <Typography sx={{ display: 'flex', alignItems: 'center', marginLeft: '2rem', color: theme.palette.blue.first }} onClick={() => copyToClipboard(handleGender(data?.GENDER))}>
+                                    {handleGender(data?.GENDER)}
                                 </Typography>
                                 <Typography sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <BusinessCenterIcon sx={{ marginRight: '.7rem', marginLeft: '.3rem' }} />
-                                    Poste
+                                    <ApartmentIcon sx={{ marginRight: '.7rem', marginLeft: '.3rem', color: theme.palette.blue.first }} />
+                                    Site
                                 </Typography>
-                                <Typography sx={{ display: 'flex', alignItems: 'center', marginLeft: '2rem', color: theme.palette.secondary.light }} onClick={() => copyToClipboard(`${data?.POSTE || ' '}`)}>
-                                    {data?.POSTE || '-'}
+                                <Typography sx={{ display: 'flex', alignItems: 'center', marginLeft: '2rem', color: theme.palette.blue.first }} onClick={() => copyToClipboard(`${data?.LIBSITE || ''}`)}>
+                                    {data?.LIBSITE || '-'}
                                 </Typography>
-                                {/* <Typography sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <SupervisorAccountIcon sx={{ marginRight: '.7rem', marginLeft: '.3rem' }} />
-                                    Assigné à
-                                </Typography>
-                                <Typography sx={{ display: 'flex', alignItems: 'center', marginLeft: '2rem', color: theme.palette.secondary.light }} onClick={() => copyToClipboard(`${contact.manager && contact.manager}`)}>
-                                    {contact.manager || '-'}
-                                </Typography> */}
                             </Box>
                         </Grid>
                     </Grid>
                     <Grid container>
                         <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                            <Box gap={1} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+                            <Box gap={1} sx={{ pt: 2, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
                                 {data?.PHONE &&
                                     <Typography
                                         title="Tél"
                                         component={"a"}
                                         href={`tel:${data.PHONE}`}
-                                        sx={{ display: 'flex', alignItems: 'center', color: theme.palette.secondary.light }}
+                                        sx={{ display: 'flex', alignItems: 'center', color: theme.palette.blue.first }}
                                         onClick={() => copyToClipboard(`${data.PHONE}`)}
                                     >
                                         <PhoneIcon sx={{ marginRight: '.7rem' }} />
-                                        {data?.PHONE}
+                                        <Box color={"grey"}>{data?.PHONE}</Box>
+                                    </Typography>
+                                }
+                                {data?.PHONEPRI &&
+                                    <Typography
+                                        title="Tél"
+                                        component={"a"}
+                                        href={`tel:${data.PHONEPRI}`}
+                                        sx={{ display: 'flex', alignItems: 'center', color: theme.palette.blue.first }}
+                                        onClick={() => copyToClipboard(`${data.PHONEPRI}`)}
+                                    >
+                                        <Box sx={{ marginRight: '2rem' }}></Box>
+                                        <Box color={"grey"}>{data?.PHONEPRI}</Box>
+                                    </Typography>
+                                }
+                                {data?.FAX &&
+                                    <Typography
+                                        title="Tél"
+                                        component={"a"}
+                                        href={`tel:${data.FAX}`}
+                                        sx={{ display: 'flex', alignItems: 'center', color: theme.palette.blue.first }}
+                                        onClick={() => copyToClipboard(`${data.FAX}`)}
+                                    >
+                                        <FaxIcon sx={{ marginRight: '.7rem' }} />
+                                        <Box color={"grey"}>{data?.FAX}</Box>
                                     </Typography>
                                 }
                                 {data?.EMAIL &&
@@ -204,17 +199,17 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
                                         title="Email"
                                         component={"a"}
                                         href={`mailto:${data.EMAIL}`}
-                                        sx={{ display: 'flex', alignItems: 'center', color: theme.palette.secondary.light }}
+                                        sx={{ display: 'flex', alignItems: 'center', color: theme.palette.blue.first }}
                                         onClick={() => copyToClipboard(`${data.EMAIL}`)}
                                     >
                                         <EmailIcon sx={{ marginRight: '.7rem' }} />
-                                        {data?.EMAIL}
+                                        <Box color={"grey"}>{data?.EMAIL}</Box>
                                     </Typography>
                                 }
                                 {data?.ADDRESS &&
-                                    <Typography title="Adresse" sx={{ display: 'flex', alignItems: 'center' }} onClick={() => copyToClipboard(`${data.ADDRESS}`)}>
+                                    <Typography title="Adresse" sx={{ display: 'flex', alignItems: 'center', color: theme.palette.blue.first }} onClick={() => copyToClipboard(`${data.ADDRESS}`)}>
                                         <HomeIcon sx={{ marginRight: '.7rem' }} />
-                                        {data?.ADDRESS}
+                                        <Box color={"grey"}>{data?.ADDRESS}</Box>
                                     </Typography>
                                 }
                             </Box>
@@ -229,68 +224,24 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
                                 }}>
                                     <Button
                                         variant="contained"
-                                        startIcon={<DetailsIcon />}
                                         fullWidth
                                         onClick={handleDetailsClick}
                                         sx={{
+                                            backgroundColor: theme.palette.blue.first,
+                                            color: theme.palette.white.first,
+                                            fontWeight: 'bold',
                                             "&:hover": {
-                                                backgroundColor: 'transparent'
+                                                backgroundColor: theme.palette.blue.first,
                                             }
                                         }}
                                     >
                                         Détails
                                     </Button>
                                 </Box>
-                                {/* <Box sx={{ width: '50%' }}>
-                                    <Button
-                                        variant="contained"
-                                        startIcon={<MoreVertIcon />}
-                                        fullWidth
-                                        sx={{
-                                            "&:hover": {
-                                                backgroundColor: 'transparent'
-                                            }
-                                        }}>
-                                        Actions
-                                    </Button>
-                                </Box> */}
                             </Box>
                         </Grid>
 
                     </Grid>
-                    {/* <Box mt={2}>
-                        <Accordion sx={{ backgroundColor: theme.palette.background.alt }}
-                        >
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="opportunities-content"
-                                id="opportunities-header"
-                            >
-                                <Typography variant="subtitle1">Opportunités</Typography>
-
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <hr style={{ border: '1px solid #a3a3a3' }} />
-
-                                {renderCustomOpportunities()}
-                            </AccordionDetails>
-                        </Accordion>
-                        <Accordion sx={{ backgroundColor: theme.palette.background.alt }}
-                        >
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="activities-content"
-                                id="activities-header"
-                            >
-                                <Typography variant="subtitle1">Activités</Typography>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <hr style={{ border: '1px solid #a3a3a3' }} />
-
-                                {renderCustomActivities()}
-                            </AccordionDetails>
-                        </Accordion>
-                    </Box> */}
                 </Box>
                 <Snackbar open={snackbarOpen} autoHideDuration={1000} onClose={handleCloseSnackbar}>
                     <Alert elevation={6} variant="filled" onClose={handleCloseSnackbar} severity="success">
