@@ -8,7 +8,6 @@ import { useTheme } from "@mui/system";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom";
 
-
 const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -16,7 +15,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
   const handleLogout = () => {
     dispatch(logOut());
-    navigate('/');
+    navigate('/login');
   };
 
   return (

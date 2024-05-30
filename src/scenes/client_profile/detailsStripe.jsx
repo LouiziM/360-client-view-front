@@ -12,18 +12,18 @@ const DetailsStripe = ({ theme, clientSelected }) => {
     if (clientSelected) {
       setList2Data([
         clientSelected?.TYPECUST || "-",
-        "-",
+        clientSelected?.CATEGORY || "-",
         clientSelected?.BIRTHDATE ? dayjs(clientSelected?.BIRTHDATE).format('DD/MM/YYYY') : "-",
-        "-",
-        clientSelected?.CIN || "-"
+        clientSelected?.PROFESSION || "-",
+        clientSelected?.TYPECUST === 'Particuliers' ? (clientSelected?.CIN || "-") : (clientSelected?.ICE || "-")
       ]);
 
       setList4Data([
         clientSelected?.CUSTNO || "-",
-        (clientSelected?.PHONE ? clientSelected?.PHONE : '') + (clientSelected?.PHONE && clientSelected?.PHONEPRI ? ' / ' : '') + (clientSelected?.PHONEPRI ? clientSelected?.PHONEPRI : ''),
+        ((clientSelected?.PHONE && clientSelected?.PHONEPRI) ? `${clientSelected?.PHONE} / ${clientSelected?.PHONEPRI}` : (clientSelected?.PHONE ? clientSelected?.PHONE : (clientSelected?.PHONEPRI ? clientSelected?.PHONEPRI : '-'))),
         clientSelected?.EMAIL || "-",
         clientSelected?.CITY || "-",
-        "-"
+        clientSelected?.LIBSITE || "-"
       ]);
     }
   }, [clientSelected]);
@@ -33,7 +33,7 @@ const DetailsStripe = ({ theme, clientSelected }) => {
     "Catégorie",
     "Date de naissance",
     "Profession",
-    "CIN"
+    clientSelected?.TYPECUST === 'Particuliers' ? "CIN" : "ICE"
   ];
 
   const list3Data = [
@@ -41,7 +41,7 @@ const DetailsStripe = ({ theme, clientSelected }) => {
     "N° Tél",
     "Email",
     "Ville",
-    "Classe"
+    "Site"
   ];
 
   return (

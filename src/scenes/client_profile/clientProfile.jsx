@@ -71,7 +71,7 @@ const ClientProfile = () => {
       <Box mt={"24px"} id="clientSatisfaction">
         <Grid container spacing={3}>
           <MarketingCampaigns theme={theme} />
-          <ClientSatisfaction theme={theme} />
+          <ClientSatisfaction theme={theme} clientSelected={clientSelected} />
         </Grid>
       </Box>
 

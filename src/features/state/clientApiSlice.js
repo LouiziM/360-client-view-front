@@ -30,6 +30,13 @@ export const clientApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ['passage-sav'],
     }),
+    getSatisfaction: builder.query({
+      query: (id) => ({
+        url: `/clients/satisfaction/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['satisfaction'],
+    }),
     getCustomersPerRegion: builder.query({
       query: () => ({
         url: `/clients/customer-count-by-region`,
@@ -41,4 +48,4 @@ export const clientApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetAllClientsQuery, useGetCompletionQuery, useGetCustomersPerRegionQuery, useGetParcClientsQuery, useGetPassageSAVQuery } = clientApiSlice;
+export const { useGetAllClientsQuery, useGetCompletionQuery, useGetCustomersPerRegionQuery, useGetParcClientsQuery, useGetPassageSAVQuery, useGetSatisfactionQuery } = clientApiSlice;

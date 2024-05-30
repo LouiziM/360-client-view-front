@@ -170,7 +170,8 @@ const Clients = () => {
       width: 300,
       align: 'center',
       renderCell: ({ row }) => (
-        <CustomTooltip title={(row?.PHONE ? row?.PHONE : '') + (row?.PHONE && row?.PHONEPRI ? ' / ' : '') + (row?.PHONEPRI ? row?.PHONEPRI : '')} />
+        // <CustomTooltip title={(row?.PHONE ? row?.PHONE : '') + (row?.PHONE && row?.PHONEPRI ? ' / ' : '') + (row?.PHONEPRI ? row?.PHONEPRI : '')} />
+        <CustomTooltip title={(row?.PHONE && row?.PHONEPRI) ? `${row?.PHONE} / ${row?.PHONEPRI}` : (row?.PHONE ? row?.PHONE : (row?.PHONEPRI ? row?.PHONEPRI : '-')) } />
       )
     },
     {

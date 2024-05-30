@@ -7,9 +7,9 @@ const storedToken = localStorage.getItem("authToken");
 
 
 const RequireAuth = () => {
-  const token = useSelector(selectCurrentToken);
+  const token = useSelector(selectCurrentToken)||storedToken;
   const location = useLocation();
-  return token||storedToken ? <Outlet /> : <Navigate to="/" state={{ from: location }} replace />;
+  return token ? <Outlet /> : <Navigate to="/login" state={{ from: location }} replace />;
 };
 
 export default RequireAuth;

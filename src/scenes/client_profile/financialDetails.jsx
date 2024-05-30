@@ -14,12 +14,12 @@ const FinancialData = ({ theme, clientSelected, completion }) => {
     },
     {
       label: "Solde",
-      value: clientSelected?.SOLDE || '-',
+      value: clientSelected?.SOLDE === 0 ? '0 DH' : (clientSelected?.SOLDE || '-'),
       icon: dollaSignIcon
     },
     {
       label: "Crédit Autorisé",
-      value: "-",
+      value: clientSelected?.CREDIT_AUTORISE === 0 ? '0 DH' : (clientSelected?.CREDIT_AUTORISE || '-'),
       icon: handoutIcon
     }
   ];
@@ -38,7 +38,7 @@ const FinancialData = ({ theme, clientSelected, completion }) => {
               Informations financières
             </Typography>
             <Typography variant="h5" fontWeight="bold" color={theme.palette.blue.first}>
-              Type : <span style={{ fontWeight: "200" }}>-</span>
+              Type : <span style={{ fontWeight: "200" }}>{clientSelected?.STATUT_FIN || '-'}</span>
             </Typography>
           </Box>
 

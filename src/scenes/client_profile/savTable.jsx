@@ -3,13 +3,20 @@ import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, frFR, gridClasses, GridLogicOperator, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { Grid, Box, Typography, CircularProgress, IconButton, Modal, useMediaQuery, Divider } from '@mui/material';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { Grid, Box, Typography, CircularProgress, IconButton, Modal, useMediaQuery, Divider, Tooltip } from '@mui/material';
 import { CustomTooltip } from './misc/customTooltip.tsx';
 import { useGetPassageSAVQuery } from 'features/state/clientApiSlice.js';
 import dayjs from 'dayjs';
 import NoDataLogo from '../../assets/No data.gif';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useState } from 'react';
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+import { CustomTooltipIcon } from './misc/customTooltipIcon.tsx';
 
 const ODD_OPACITY = 0.4;
 
@@ -161,7 +168,26 @@ export default function SavTable({ theme, clientSelected }) {
       flex: 1,
       align: "center",
       renderCell: (params) => (
-        <>{params.value ? <CheckCircleIcon style={{ color: 'green' }} /> : <CancelIcon style={{ color: 'red' }} />}</>
+        <>
+          {params?.row?.SENTIMENT ?
+            <>
+              {params?.row?.SENTIMENT?.toLowerCase() === ('Très Satisfait'?.toLowerCase()) &&
+                <CustomTooltipIcon title={'Très Satisfait'} children={<SentimentVerySatisfiedIcon style={{ color: 'green' }} />} />
+              }
+              {params?.row?.SENTIMENT?.toLowerCase() === ('Satisfait'?.toLowerCase()) &&
+                <CustomTooltipIcon title={'Satisfait'} children={<SentimentSatisfiedAltIcon style={{ color: 'green' }} />} />
+              }
+              {params?.row?.SENTIMENT?.toLowerCase() === ('Insatisfait'?.toLowerCase()) &&
+                <CustomTooltipIcon title={'Insatisfait'} children={<SentimentDissatisfiedIcon style={{ color: 'red' }} />} />
+              }
+              {params?.row?.SENTIMENT?.toLowerCase() === ('Très Insatisfait'?.toLowerCase()) &&
+                <CustomTooltipIcon title={'Très Insatisfait'} children={<SentimentVeryDissatisfiedIcon style={{ color: 'red' }} />} />
+              }
+            </>
+            :
+            <CustomTooltipIcon title={'Aucun retour'} children={<RemoveCircleIcon style={{ color: 'gray' }} />} />
+          }
+        </>
       )
     },
     {
@@ -320,7 +346,7 @@ export default function SavTable({ theme, clientSelected }) {
               </Grid>
 
               <Divider style={{ width: '100%', backgroundColor: theme.palette.blue.first, height: '0.5px' }} />
-              
+
               <Grid container spacing={3}>
                 <Grid item md={6} sm={6} xs={6}>
                   <Typography variant='h5' color={theme.palette.blue.first} fontWeight={"bold"}>
@@ -342,6 +368,19 @@ export default function SavTable({ theme, clientSelected }) {
                 </Grid>
                 <Grid item md={6} sm={6} xs={6} color={theme.palette.blue.first} textAlign={"right"}>
                   {detailSav?.TYPE_LIGNE || '-'}
+                </Grid>
+              </Grid>
+
+              <Divider style={{ width: '100%', backgroundColor: theme.palette.blue.first, height: '0.5px' }} />
+
+              <Grid container spacing={3}>
+                <Grid item md={6} sm={6} xs={6}>
+                  <Typography variant='h5' color={theme.palette.blue.first} fontWeight={"bold"}>
+                    Description
+                  </Typography>
+                </Grid>
+                <Grid item md={6} sm={6} xs={6} color={theme.palette.blue.first} textAlign={"right"}>
+                  {detailSav?.DESCRIPTION || '-'}
                 </Grid>
               </Grid>
 
@@ -402,19 +441,6 @@ export default function SavTable({ theme, clientSelected }) {
               <Grid container spacing={3}>
                 <Grid item md={6} sm={6} xs={6}>
                   <Typography variant='h5' color={theme.palette.blue.first} fontWeight={"bold"}>
-                    Description
-                  </Typography>
-                </Grid>
-                <Grid item md={6} sm={6} xs={6} color={theme.palette.blue.first} textAlign={"right"}>
-                  {detailSav?.DESCRIPTION || '-'}
-                </Grid>
-              </Grid>
-
-              <Divider style={{ width: '100%', backgroundColor: theme.palette.blue.first, height: '0.5px' }} />
-
-              <Grid container spacing={3}>
-                <Grid item md={6} sm={6} xs={6}>
-                  <Typography variant='h5' color={theme.palette.blue.first} fontWeight={"bold"}>
                     Montant dépensé
                   </Typography>
                 </Grid>
@@ -424,7 +450,7 @@ export default function SavTable({ theme, clientSelected }) {
               </Grid>
 
               <Divider style={{ width: '100%', backgroundColor: theme.palette.blue.first, height: '0.5px' }} />
-              
+
               <Grid container spacing={3}>
                 <Grid item md={6} sm={6} xs={6}>
                   <Typography variant='h5' color={theme.palette.blue.first} fontWeight={"bold"}>

@@ -71,7 +71,7 @@ const MarketingCampaigns = ({ theme }) => {
   const data = [
     {
       id: "Réponses aux campagnes",
-      data: [{ x: "", y: 20 }]
+      data: [{ x: "", y: 0 }]
     }
   ];
 
@@ -325,7 +325,7 @@ const MarketingCampaigns = ({ theme }) => {
                 Historique de participation aux campagnes
               </Typography>
               <StripedDataGrid
-                rows={rows}
+                rows={[]}
                 columns={columns}
                 getRowClassName={(params) =>
                   params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'

@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setCredentials } from '../features/auth/authSlice';
 import { useLoginMutation } from '../features/auth/authApiSlice';
 import Button from '@mui/material/Button';
@@ -14,8 +14,6 @@ import SatisfactionClient2 from '../assets/satisfaction_client_2.png';
 import RelationClient from '../assets/relation_client.png';
 import InformationClient from '../assets/information_client.png';
 import { Grid, useTheme } from '@mui/material';
-import { isAdmin } from 'utils/Roles';
-import Cookies from 'js-cookie';
 
 const Login = () => {
 
@@ -40,9 +38,6 @@ const Login = () => {
 
   useEffect(() => {
     userRef.current && userRef.current.focus();
-    sessionStorage.clear();
-    localStorage.clear();
-    Cookies.remove('jwt');
   }, []);
 
   useEffect(() => {
@@ -57,7 +52,7 @@ const Login = () => {
       dispatch(setCredentials({ ...userData, remember }));
       setUser('');
       setPwd('');
-      navigate(isAdmin(userData?.user) ? '/utilisateurs' : '/clients');
+      navigate('/');
     } catch (err) {
       if (!err?.originalStatus) {
         setErrMsg('Aucune réponse du serveur');
@@ -71,7 +66,6 @@ const Login = () => {
       errRef.current && errRef.current.focus();
     }
   };
-
 
   const handleUserInput = (e) => setUser(e.target.value);
 
@@ -169,7 +163,7 @@ const Login = () => {
           <Typography component="h5" variant="h5" textAlign={"center"} color={theme.palette.gray.second}>Créée par AutoHall 2024.</Typography>
         </Box>
       </Grid>
-    </Grid >
+    </Grid>
   );
 };
 

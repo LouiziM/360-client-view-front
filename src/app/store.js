@@ -5,21 +5,21 @@ import authReducer from '../features/auth/authSlice';
 import clientSelectedReducer from '../features/state/clientSelectedSlice';
 
 import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage/session";
+import sessionStorage from "redux-persist/lib/storage/session";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { clientApiSlice } from "../features/state/clientApiSlice";
 
 // Configuration for redux-persist
 const persistConfig = {
   key: "auth",
-  storage: storage,
+  storage: sessionStorage,
 };
 
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 
 const persistConfigClientSelected = {
   key: "clientSelected",
-  storage: storage,
+  storage: sessionStorage,
 };
 
 const persistedClientSelectedReducer = persistReducer(persistConfigClientSelected, clientSelectedReducer);
@@ -29,7 +29,7 @@ const rootReducer = {
   [apiSlice.reducerPath]: apiSlice.reducer,
   auth: persistedAuthReducer,
   clientSelected: persistedClientSelectedReducer,
-  [clientApiSlice.reducerPath]: clientApiSlice.reducer, 
+  [clientApiSlice.reducerPath]: clientApiSlice.reducer,
 };
 
 const combinedMiddleware = [

@@ -138,13 +138,17 @@ const ClientCard = ({ data, theme, toggleDrawer }) => {
                         </Grid>
                         <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
                             <Box>
-                                <Typography sx={{ display: 'flex', alignItems: 'center' }} >
-                                    <TransgenderIcon sx={{ marginRight: '.7rem', marginLeft: '.3rem', color: theme.palette.blue.first }} />
-                                    Sexe
-                                </Typography>
-                                <Typography sx={{ display: 'flex', alignItems: 'center', marginLeft: '2rem', color: theme.palette.blue.first }} onClick={() => copyToClipboard(handleGender(data?.GENDER))}>
-                                    {handleGender(data?.GENDER)}
-                                </Typography>
+                                {data?.TYPECUST === "Particuliers" &&
+                                    <>
+                                        <Typography sx={{ display: 'flex', alignItems: 'center' }} >
+                                            <TransgenderIcon sx={{ marginRight: '.7rem', marginLeft: '.3rem', color: theme.palette.blue.first }} />
+                                            Sexe
+                                        </Typography>
+                                        <Typography sx={{ display: 'flex', alignItems: 'center', marginLeft: '2rem', color: theme.palette.blue.first }} onClick={() => copyToClipboard(handleGender(data?.GENDER))}>
+                                            {handleGender(data?.GENDER)}
+                                        </Typography>
+                                    </>
+                                }
                                 <Typography sx={{ display: 'flex', alignItems: 'center' }}>
                                     <ApartmentIcon sx={{ marginRight: '.7rem', marginLeft: '.3rem', color: theme.palette.blue.first }} />
                                     Site

@@ -18,7 +18,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import logoImage from "assets/logo.jpg";
 import GroupsIcon from '@mui/icons-material/Groups';
 import { useSelector } from "react-redux";
-import { isAdmin } from "utils/Roles";
+import { selectCurrentUser } from "features/auth/authSlice";
+import { isAdmin, isUser } from "utils/Roles";
+import { decryptUser } from "utils/EncryptedUser";
 
 const Sidebar = ({
   drawerWidth,
@@ -26,8 +28,9 @@ const Sidebar = ({
   setIsSidebarOpen,
   isNonMobile,
 }) => {
-  const storedUser = JSON.parse(localStorage.getItem("user"));
-  const user = useSelector((state) => state.auth.user) || storedUser;
+  const storedUser = decryptUser(localStorage.getItem("user"));
+  const user = useSelector(selectCurrentUser) || storedUser;
+
   const { pathname } = useLocation();
   const [active, setActive] = useState("");
   const navigate = useNavigate();
@@ -35,16 +38,16 @@ const Sidebar = ({
 
   const navItems = [
     {
+      text: "Clients",
+      link: "/",
+      canAccess: (isAdmin(user) || isUser(user)),
+      icon: <GroupsIcon sx={{ color: theme.palette.white.first }} />
+    },
+    {
       text: "Utilisateurs",
       link: "/utilisateurs",
       canAccess: isAdmin(user),
       icon: <AdminPanelSettingsOutlined sx={{ color: theme.palette.white.first }} />,
-    },
-    {
-      text: "Clients",
-      link: "/clients",
-      canAccess: !isAdmin(user),
-      icon: <GroupsIcon sx={{ color: theme.palette.white.first }} />
     }
   ];
 

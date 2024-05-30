@@ -1,19 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
+import { encryptUser } from "utils/EncryptedUser";
 
 const authSlice = createSlice({
   name: "auth",
-  initialState: { user: null, token: null },
+  initialState: { user: null, token: null, remember: null },
   reducers: {
     setCredentials: (state, action) => {
       const { user, accessToken, remember } = action.payload;
       state.user = user;
       state.token = accessToken;
+      state.remember = remember;
 
       // Persist token in storage
       if (remember === true) {
         localStorage.setItem("authToken", accessToken);
-        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("user", encryptUser(user));
       }
     },
     logOut: (state) => {
