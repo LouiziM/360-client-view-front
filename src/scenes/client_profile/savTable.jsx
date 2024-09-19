@@ -1,22 +1,21 @@
 import * as React from 'react';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, frFR, gridClasses, GridLogicOperator, GridToolbarQuickFilter } from '@mui/x-data-grid';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { Grid, Box, Typography, CircularProgress, IconButton, Modal, useMediaQuery, Divider, Tooltip } from '@mui/material';
+import { Grid, Box, Typography, CircularProgress, IconButton, Modal, useMediaQuery, Divider } from '@mui/material';
 import { CustomTooltip } from './misc/customTooltip.tsx';
-import { useGetPassageSAVQuery } from 'features/state/clientApiSlice.js';
 import dayjs from 'dayjs';
 import NoDataLogo from '../../assets/No data.gif';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useState } from 'react';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
-import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
 import { CustomTooltipIcon } from './misc/customTooltipIcon.tsx';
+import { separateNumbersWithSpaces } from 'utils/index.js';
+import { myAxios } from 'utils/Interceptor.js';
+import { useEffect } from 'react';
 
 const ODD_OPACITY = 0.4;
 
@@ -106,7 +105,10 @@ function QuickSearchToolbar() {
 export default function SavTable({ theme, clientSelected }) {
 
   const isNonMobile = useMediaQuery("(min-width: 600px)");
-  const { data: passageSav, isLoading } = useGetPassageSAVQuery(clientSelected?.CUSTNO);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [passageSav, setPassageSav] = useState({});
+
   const [openModal, setOpenModal] = useState(false);
   const [detailSav, setDetailSav] = useState({});
 
@@ -116,6 +118,22 @@ export default function SavTable({ theme, clientSelected }) {
     setOpenModal(true);
     setDetailSav(data);
   }
+
+  const fetchPassageSAV = async () => {
+    try {
+      setIsLoading(true);
+      const res = await myAxios.get(`/clients/passage-sav/${clientSelected?.CUSTNO}`);
+      setPassageSav(res?.data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error?.response?.data?.message);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchPassageSAV();
+  }, []);
 
   const columns = [
     {
@@ -146,7 +164,7 @@ export default function SavTable({ theme, clientSelected }) {
       flex: 1,
       align: "center",
       renderCell: (params) => (
-        <CustomTooltip title={params?.row?.CA ? params?.row?.CA + ' DH' : '-'}>
+        <CustomTooltip title={params?.row?.CA === 0 ? '0 DH' : (params?.row?.CA ? separateNumbersWithSpaces(Math.round(params?.row?.CA)) + ' DH' : '-')}>
           <Typography
             sx={{
               whiteSpace: 'pre-wrap',
@@ -157,7 +175,7 @@ export default function SavTable({ theme, clientSelected }) {
               WebkitBoxOrient: 'vertical',
             }}
           >
-            {params?.row?.CA ? params?.row?.CA + ' DH' : '-'}
+            {params?.row?.CA === 0 ? '0 DH' : (params?.row?.CA ? separateNumbersWithSpaces(Math.round(params?.row?.CA)) + ' DH' : '-')}
           </Typography>
         </CustomTooltip>
       ),
@@ -292,7 +310,7 @@ export default function SavTable({ theme, clientSelected }) {
             localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
           />
         }
-        {passageSav?.data.length === 0 &&
+        {passageSav?.data?.length === 0 &&
           <Box
             sx={{
               display: 'flex',
@@ -355,19 +373,6 @@ export default function SavTable({ theme, clientSelected }) {
                 </Grid>
                 <Grid item md={6} sm={6} xs={6} color={theme.palette.blue.first} textAlign={"right"}>
                   {detailSav?.TYPE_FACTURE || '-'}
-                </Grid>
-              </Grid>
-
-              <Divider style={{ width: '100%', backgroundColor: theme.palette.blue.first, height: '0.5px' }} />
-
-              <Grid container spacing={3}>
-                <Grid item md={6} sm={6} xs={6}>
-                  <Typography variant='h5' color={theme.palette.blue.first} fontWeight={"bold"}>
-                    Type de ligne
-                  </Typography>
-                </Grid>
-                <Grid item md={6} sm={6} xs={6} color={theme.palette.blue.first} textAlign={"right"}>
-                  {detailSav?.TYPE_LIGNE || '-'}
                 </Grid>
               </Grid>
 
@@ -445,7 +450,7 @@ export default function SavTable({ theme, clientSelected }) {
                   </Typography>
                 </Grid>
                 <Grid item md={6} sm={6} xs={6} color={theme.palette.blue.first} textAlign={"right"}>
-                  {detailSav?.CA ? detailSav?.CA + ' DH' : '-'}
+                  {detailSav?.CA === 0 ? '0 DH' : (detailSav?.CA ? separateNumbersWithSpaces(Math.round(detailSav?.CA)) + ' DH' : '-')}
                 </Grid>
               </Grid>
 

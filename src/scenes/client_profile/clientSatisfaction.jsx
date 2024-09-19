@@ -1,20 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, Box, Typography, CircularProgress } from '@mui/material';
 import { Star } from '@mui/icons-material';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
-import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
-import { useGetSatisfactionQuery } from 'features/state/clientApiSlice';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { CustomTooltipIcon } from './misc/customTooltipIcon.tsx';
+import { myAxios } from 'utils/Interceptor.js';
 
 const ClientSatisfaction = ({ theme, clientSelected }) => {
-  const { data: Satisfaction, isLoading } = useGetSatisfactionQuery(clientSelected?.CUSTNO);
 
-  const satisfaction = Satisfaction?.data?.SCORE;
-  const surveys = Satisfaction?.enquetes === 0 ? 0 : (Satisfaction?.enquetes || '-');
-  const complaints = Satisfaction?.reclamations === 0 ? 0 : (Satisfaction?.reclamations || '-');
+  const [isLoading, setIsLoading] = useState(false);
+  const [satisfaction, setSatisfaction] = useState({});
+  const [surveys, setSurveys] = useState(null);
+  const [complaints, setComplaints] = useState(null);
+
+
+  const fetchSatisfaction = async () => {
+    try {
+      setIsLoading(true);
+      const res = await myAxios.get(`/clients/satisfaction/${clientSelected?.CUSTNO}`);
+      setSatisfaction(res?.data?.data?.SCORE);
+      setSurveys(res?.data?.enquetes === 0 ? 0 : (res?.data?.enquetes || '-'));
+      setComplaints(res?.data?.reclamations === 0 ? 0 : (res?.data?.reclamations || '-'));
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error?.response?.data?.message);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchSatisfaction();
+  }, []);
 
   let iconSize = '14rem';
   let iconMarginTop = '1rem';
@@ -22,15 +41,15 @@ const ClientSatisfaction = ({ theme, clientSelected }) => {
   const renderSatisfactionIcon = () => {
     switch (satisfaction) {
       case 0:
-        return <SentimentVeryDissatisfiedIcon style={{ fontSize: iconSize, color: theme.palette.blue.first, marginTop: iconMarginTop }} />;
+        return <CustomTooltipIcon title={'Très Insatisfait'} children={<SentimentVeryDissatisfiedIcon style={{ fontSize: iconSize, color: theme.palette.blue.first, marginTop: iconMarginTop }} />} />;
       case 1:
-        return <SentimentDissatisfiedIcon style={{ fontSize: iconSize, color: theme.palette.blue.first, marginTop: iconMarginTop }} />;
+        return <CustomTooltipIcon title={'Insatisfait'} children={<SentimentDissatisfiedIcon style={{ fontSize: iconSize, color: theme.palette.blue.first, marginTop: iconMarginTop }} />} />;
       // case 3:
       //   return <SentimentNeutralIcon style={{ fontSize: iconSize, color: theme.palette.blue.first, marginTop: iconMarginTop }} />;
       case 2:
-        return <SentimentSatisfiedAltIcon style={{ fontSize: iconSize, color: theme.palette.blue.first, marginTop: iconMarginTop }} />;
+        return <CustomTooltipIcon title={'Satisfait'} children={<SentimentSatisfiedAltIcon style={{ fontSize: iconSize, color: theme.palette.blue.first, marginTop: iconMarginTop }} />} />;
       case 3:
-        return <SentimentVerySatisfiedIcon style={{ fontSize: iconSize, color: theme.palette.blue.first, marginTop: iconMarginTop }} />;
+        return <CustomTooltipIcon title={'Satisfait'} children={<SentimentVerySatisfiedIcon style={{ fontSize: iconSize, color: theme.palette.blue.first, marginTop: iconMarginTop }} />} />;
       default:
         return null;
     }
@@ -68,18 +87,20 @@ const ClientSatisfaction = ({ theme, clientSelected }) => {
             <CircularProgress sx={{ color: theme.palette.blue.first }} />
           </Box>
         }
-        <Grid container direction="column" height={"88%"}>
-          <Box textAlign={"center"}>
-            {satisfaction ? renderSatisfactionIcon() : <RemoveCircleIcon style={{ fontSize: iconSize, color: 'gray', marginTop: iconMarginTop }} />}
-          </Box>
-          <Box display="flex" marginBottom="10px" marginTop="30px" justifyContent={"center"}>
-            {satisfaction ? renderStars() : <Typography textAlign="center" variant="h4" color={theme.palette.blue.first}>Aucun retour</Typography>}
-          </Box>
-          <Box marginTop={"auto"} display="flex" justifyContent={"space-between"}>
-            <Typography textAlign="center" fontWeight="bold" variant="h5" color={theme.palette.blue.first}>Enquêtes: {surveys}</Typography>
-            <Typography textAlign="center" fontWeight="bold" variant="h5" marginLeft="20px" color={theme.palette.blue.first}>Réclamations: {complaints}</Typography>
-          </Box>
-        </Grid>
+        {!isLoading &&
+          <Grid container direction="column" height={"88%"}>
+            <Box textAlign={"center"}>
+              {satisfaction ? renderSatisfactionIcon() : <CustomTooltipIcon placement="top" title={'Aucun retour'} children={<RemoveCircleIcon style={{ fontSize: iconSize, color: 'gray', marginTop: iconMarginTop }} />} />}
+            </Box>
+            <Box display="flex" marginBottom="10px" marginTop="30px" justifyContent={"center"}>
+              {satisfaction ? renderStars() : <Typography textAlign="center" variant="h4" color={theme.palette.blue.first}>Aucun retour</Typography>}
+            </Box>
+            <Box marginTop={"auto"} display="flex" justifyContent={"space-between"}>
+              <Typography textAlign="center" fontWeight="bold" variant="h5" color={theme.palette.blue.first}>Enquêtes: {surveys}</Typography>
+              <Typography textAlign="center" fontWeight="bold" variant="h5" marginLeft="20px" color={theme.palette.blue.first}>Réclamations: {complaints}</Typography>
+            </Box>
+          </Grid>
+        }
       </Box>
     </Grid>
   );

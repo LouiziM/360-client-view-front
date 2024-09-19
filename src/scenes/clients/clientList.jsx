@@ -2,7 +2,6 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import { Grid, TextField, InputAdornment, IconButton } from '@mui/material';
-import { useGetAllClientsQuery } from '../../features/state/clientApiSlice';
 import { gridClasses } from '@mui/x-data-grid';
 import SearchIcon from "@mui/icons-material/SearchOutlined";
 import { useTheme } from "@mui/material";
@@ -15,7 +14,8 @@ import { CustomTooltip } from 'scenes/client_profile/misc/customTooltip.tsx';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { useDebounce } from 'utils/debounceSearch';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { myAxios } from 'utils/Interceptor';
 
 dayjs.extend(utc);
 
@@ -71,7 +71,11 @@ const Clients = () => {
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [open, setOpen] = React.useState(false);
 
-  const [searchTerm, setSearchTerm] = React.useState("");
+  const initialSearchTerm = React.useMemo(() => {
+    return localStorage.getItem('searchTerm') || '';
+  }, []);
+
+  const [searchTerm, setSearchTerm] = React.useState(initialSearchTerm);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const [paginationModel, setPaginationModel] = React.useState({
@@ -81,10 +85,30 @@ const Clients = () => {
     pageSizeOptions: [10, 25, 100]
   });
 
-  const { data: clients = [], isLoading } = useGetAllClientsQuery({ ...paginationModel, searchTerm: debouncedSearchTerm });
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [totalClients, setTotalClients] = React.useState(0);
+  const [clients, setClients] = React.useState([]);
+
+  const fetchClients = async () => {
+    try {
+      setIsLoading(true);
+      const res = await myAxios.get(`/clients?page=${paginationModel?.page}&pageSize=${paginationModel?.pageSize}&searchTerm=${debouncedSearchTerm}`);
+      setClients(res?.data);
+      setTotalClients(res?.data?.totalClients);
+      setIsLoading(false);
+    } catch (error) {
+      console.log("error : ", error);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchClients();
+  }, [debouncedSearchTerm, paginationModel?.page, paginationModel?.pageSize]);
 
   const handleChangeFilter = (e) => {
     setSearchTerm(e?.target?.value);
+    localStorage.setItem('searchTerm', e?.target?.value);
     setTimeout(() => {
       setPaginationModel({ ...paginationModel, page: 0 });
     }, 1000);
@@ -113,16 +137,6 @@ const Clients = () => {
       )
     },
     {
-      field: 'NAME2',
-      headerName: 'Nom',
-      type: 'string',
-      align: 'center',
-      width: 150,
-      renderCell: ({ row }) => (
-        <CustomTooltip title={row?.NAME2 ? row?.NAME2 : ''} />
-      )
-    },
-    {
       field: 'FIRSTNAME',
       headerName: 'Prénom',
       type: 'string',
@@ -130,6 +144,16 @@ const Clients = () => {
       width: 150,
       renderCell: ({ row }) => (
         <CustomTooltip title={row?.FIRSTNAME ? row?.FIRSTNAME : ''} />
+      )
+    },
+    {
+      field: 'NAME2',
+      headerName: 'Nom',
+      type: 'string',
+      align: 'center',
+      width: 150,
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row?.NAME2 ? row?.NAME2 : ''} />
       )
     },
     {
@@ -152,26 +176,26 @@ const Clients = () => {
         <CustomTooltip title={row?.COUNTRY ? row?.COUNTRY : ''} />
       )
     },
-    {
-      field: 'DATECRE',
-      headerName: 'Crée le',
-      type: 'date',
-      align: 'center',
-      width: 180,
-      valueGetter: (params) => new Date(params.value),
-      renderCell: ({ row }) => (
-        <CustomTooltip title={row?.DATECRE ? dayjs.utc(row?.DATECRE).format("YYYY-MM-DD à HH:mm:ss") : ''} />
-      )
-    },
+    // {
+    //   field: 'DATECRE',
+    //   headerName: 'Crée le',
+    //   type: 'date',
+    //   align: 'center',
+    //   width: 180,
+    //   valueGetter: (params) => new Date(params.value),
+    //   renderCell: ({ row }) => (
+    //     <CustomTooltip title={row?.DATECRE ? dayjs.utc(row?.DATECRE).format("YYYY-MM-DD à HH:mm:ss") : ''} />
+    //   )
+    // },
     {
       field: 'PHONE',
-      headerName: 'Tel',
+      headerName: 'N° Téléphone',
       type: 'string',
       width: 300,
       align: 'center',
       renderCell: ({ row }) => (
         // <CustomTooltip title={(row?.PHONE ? row?.PHONE : '') + (row?.PHONE && row?.PHONEPRI ? ' / ' : '') + (row?.PHONEPRI ? row?.PHONEPRI : '')} />
-        <CustomTooltip title={(row?.PHONE && row?.PHONEPRI) ? `${row?.PHONE} / ${row?.PHONEPRI}` : (row?.PHONE ? row?.PHONE : (row?.PHONEPRI ? row?.PHONEPRI : '-')) } />
+        <CustomTooltip title={(row?.PHONE && row?.PHONEPRI) ? `${row?.PHONE} / ${row?.PHONEPRI}` : (row?.PHONE ? row?.PHONE : (row?.PHONEPRI ? row?.PHONEPRI : '-'))} />
       )
     },
     {
@@ -204,98 +228,88 @@ const Clients = () => {
 
   return (
     <>
-      {(!isLoading) ?
-        <Grid container p={5}>
-          <Grid item md={4} sm={4} xs={12}>
-            <TextField
-              fullWidth
-              variant="outlined"
-              id="search"
-              name="search"
-              value={searchTerm}
-              onChange={handleChangeFilter}
-              placeholder="Rechercher"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <IconButton>
-                      <SearchIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid item lg={12} width={"100%"} mt={3}>
-            <StripedDataGrid
-              theme={theme}
-              rows={clients?.data || []}
-              columns={columns}
-              getRowClassName={(params) =>
-                params?.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
-              }
-              onRowClick={handleRowClick}
-              getRowId={(row) => row.CUSTNO}
-              localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
-
-              rowCount={clients?.totalClients}
-              paginationMode="server"
-              paginationModel={paginationModel}
-              onPaginationModelChange={handleChangePagination}
-              pageSizeOptions={paginationModel?.pageSizeOptions}
-
-              sx={{
-                '& .MuiDataGrid-root': {
-                  border: 'none',
-                },
-                '& .MuiDataGrid-cell': {
-                  borderBottom: 'none',
-                },
-                '& .MuiDataGrid-columnHeaders': {
-                  borderTop: `1px solid ${theme.palette.gray.third}`,
-                },
-                '& .MuiDataGrid-toolbarContainer .MuiButton-text': {
-                  color: `${theme.palette.black.default} !important`,
-                },
-                '& .MuiDataGrid-columnHeaderTitle': {
-                  fontWeight: 'bold',
-                },
-              }}
-            />
-
-            <Drawer
-              variant="persistent"
-              anchor="right"
-              open={open}
-              PaperProps={{
-                style: {
-                  border: 'none',
-                  backgroundColor: 'transparent',
-                  boxShadow: 'none',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'flex-start',
-                  alignItems: 'stretch',
-                  width: 'auto',
-                },
-              }}
-            >
-              <Box flex="1" overflow="auto" py={5.5} pl={4} sx={{ overflowY: 'scroll' }}>
-                <ClientCard data={selectedRow} theme={theme} toggleDrawer={toggleDrawer} />
-              </Box>
-            </Drawer>
-          </Grid>
+      <Grid container p={5}>
+        <Grid item md={4} sm={4} xs={12}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            id="search"
+            name="search"
+            value={searchTerm}
+            onChange={handleChangeFilter}
+            placeholder="Rechercher"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <IconButton>
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
         </Grid>
-        :
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          height="500px"
-        >
-          <CircularProgress sx={{ color: theme.palette.blue.first }} />
-        </Box>
-      }
+        <Grid item lg={12} width={"100%"} mt={3}>
+          <StripedDataGrid
+            theme={theme}
+            rows={clients?.data || []}
+            autoHeight
+            columns={columns}
+            loading={isLoading}
+            getRowClassName={(params) =>
+              params?.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
+            }
+            onRowClick={handleRowClick}
+            getRowId={(row) => row.CUSTNO}
+            localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
+            paginationMode="server"
+            rowCount={totalClients}
+            paginationModel={paginationModel}
+            onPaginationModelChange={handleChangePagination}
+            pageSizeOptions={paginationModel?.pageSizeOptions}
+
+            sx={{
+              '& .MuiDataGrid-root': {
+                border: 'none',
+              },
+              '& .MuiDataGrid-cell': {
+                borderBottom: 'none',
+              },
+              '& .MuiDataGrid-columnHeaders': {
+                borderTop: `1px solid ${theme.palette.gray.third}`,
+              },
+              '& .MuiDataGrid-toolbarContainer .MuiButton-text': {
+                color: `${theme.palette.black.default} !important`,
+              },
+              '& .MuiDataGrid-columnHeaderTitle': {
+                fontWeight: 'bold',
+              },
+            }}
+          />
+
+          <Drawer
+            variant="persistent"
+            anchor="right"
+            open={open}
+            PaperProps={{
+              style: {
+                border: 'none',
+                backgroundColor: 'transparent',
+                boxShadow: 'none',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                alignItems: 'stretch',
+                width: 'auto',
+              },
+            }}
+          >
+            <Box flex="1" overflow="auto" py={5.5} pl={4} sx={{ overflowY: 'scroll' }}>
+              <ClientCard data={selectedRow} theme={theme} toggleDrawer={toggleDrawer} />
+            </Box>
+          </Drawer>
+        </Grid>
+      </Grid>
     </>
   );
 

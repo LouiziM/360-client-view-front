@@ -1,13 +1,17 @@
 import { Grid, Box, Typography, Card, CardContent, CircularProgress, Modal, useMediaQuery, Divider } from '@mui/material';
 import dayjs from 'dayjs';
-import { useGetParcClientsQuery } from 'features/state/clientApiSlice';
 import NoDataLogo from '../../assets/No data.gif';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { separateNumbersWithSpaces } from 'utils';
+import { myAxios } from 'utils/Interceptor';
+import ClientParkList from './clientParkList';
 
 const ClientPark = ({ theme, clientSelected }) => {
 
   const isNonMobile = useMediaQuery("(min-width: 600px)");
-  const { data: parcClientData, isLoading, } = useGetParcClientsQuery(clientSelected?.CUSTNO);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [parcClientData, setParcClientData] = useState([]);
 
   const [openModalParc, setOpenModalParc] = useState(false);
   const [detailParc, setDetailParc] = useState({});
@@ -18,6 +22,24 @@ const ClientPark = ({ theme, clientSelected }) => {
     setOpenModalParc(true);
     setDetailParc(data);
   }
+
+  const [page, setPage] = useState(1);
+
+  const fetchParcClient = async (page) => {
+    try {
+      setIsLoading(true);
+      const res = await myAxios.get(`/clients/parc-client/${clientSelected?.CUSTNO}?page=${page}&limit=10`);
+      setParcClientData(prevItems => [...prevItems, ...res?.data?.data]);
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error?.response?.data?.message);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchParcClient(page);
+  }, [page]);
 
   return (
     <Grid item xs={12} sm={12} md={6} lg={6} xl={6} sx={{ display: "flex" }}>
@@ -32,7 +54,7 @@ const ClientPark = ({ theme, clientSelected }) => {
           Parc client
         </Typography>
         <hr style={{ border: `1px solid ${theme.palette.blue.first}`, width: '100%' }} />
-        {isLoading &&
+        {/* {isLoading &&
           <Box
             display="flex"
             justifyContent="center"
@@ -41,147 +63,58 @@ const ClientPark = ({ theme, clientSelected }) => {
           >
             <CircularProgress sx={{ color: theme.palette.blue.first }} />
           </Box>
-        }
-        {(!isLoading && parcClientData?.data.length > 0) &&
-          <>
-            <Box mb="20px" mt="20px">
-              <Grid container spacing={2}>
-                <Grid item md={6} sm={12} xs={12}>
-                  <Card sx={{
-                    flexGrow: 1,
-                    backgroundColor: theme.palette.blue.second,
-                    borderRadius: '10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    boxShadow: 'none'
+        } */}
+        {(parcClientData?.length > 0) &&
+          <Box mb="20px" mt="20px">
+            <Grid container spacing={2}>
+              <Grid item md={6} sm={12} xs={12}>
+                <Card sx={{
+                  flexGrow: 1,
+                  backgroundColor: theme.palette.blue.second,
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  boxShadow: 'none'
+                }}>
+                  <CardContent sx={{
+                    width: '100%',
+                    textAlign: 'center',
+                    paddingBottom: '16px !important'
                   }}>
-                    <CardContent sx={{
-                      width: '100%',
-                      textAlign: 'center',
-                      paddingBottom: '16px !important'
-                    }}>
-                      <Typography style={{ fontWeight: 400, color: theme.palette.blue.first }}>
-                        Commercial : <strong>{parcClientData?.dernierCommercial ? parcClientData?.dernierCommercial : '-'}</strong>
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-
-                <Grid item md={6} sm={12} xs={12}>
-                  <Card sx={{
-                    flexGrow: 1,
-                    backgroundColor: theme.palette.blue.second,
-                    borderRadius: '10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    boxShadow: 'none'
-                  }}>
-                    <CardContent sx={{
-                      width: '100%',
-                      textAlign: 'center',
-                      paddingBottom: '16px !important'
-                    }}>
-                      <Typography style={{ fontWeight: 400, color: theme.palette.blue.first }}>
-                        Dernier achat : <strong>{parcClientData?.dernierDateAchat ? dayjs(parcClientData?.dernierDateAchat).format("YYYY-MM-DD") : '-'}</strong>
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
+                    <Typography style={{ fontWeight: 400, color: theme.palette.blue.first }}>
+                      Commercial : <strong>{parcClientData[0]?.COMMERCIAL || '-'}</strong>
+                    </Typography>
+                  </CardContent>
+                </Card>
               </Grid>
-            </Box>
 
-            <Grid container spacing={0} sx={{
-              overflowY: 'scroll',
-              maxHeight: '340px',
-              marginTop: '0',
-            }}>
-              {parcClientData?.data?.map((data, index) => (
-                <Grid
-                  item
-                  md={12}
-                  sm={12}
-                  xs={12}
-                  key={index}
-                  sx={{
-                    cursor: "pointer",
-                    marginBottom: "20px",
-                    "&:last-child": {
-                      marginBottom: "0"
-                    }
-                  }}
-                  onClick={() => {
-                    viewDetailParc(data)
-                  }}
-                >
-                  <Card sx={{
-                    backgroundColor: theme.palette.blue.second,
-                    borderRadius: '10px',
-                    boxShadow: 'none'
+              <Grid item md={6} sm={12} xs={12}>
+                <Card sx={{
+                  flexGrow: 1,
+                  backgroundColor: theme.palette.blue.second,
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  boxShadow: 'none'
+                }}>
+                  <CardContent sx={{
+                    width: '100%',
+                    textAlign: 'center',
+                    paddingBottom: '16px !important'
                   }}>
-                    <CardContent>
-                      <Grid container spacing={2}>
-                        <Grid item md={4} sm={6} xs={12}>
-                          <Typography variant="subtitle1" component="h3">
-                            Marque
-                          </Typography>
-                          <Typography variant="h5" component="h1" style={{ fontWeight: 'bold', color: theme.palette.blue.first }}>
-                            {data?.MARQUE || '-'}
-                          </Typography>
-                        </Grid>
-
-                        <Grid item md={4} sm={6} xs={12}>
-                          <Typography variant="subtitle1" component="h3">
-                            Version
-                          </Typography>
-                          <Typography variant="h5" component="h1" style={{ fontWeight: 'bold', color: theme.palette.blue.first }}>
-                            {data?.VERSION || '-'}
-                          </Typography>
-                        </Grid>
-
-                        <Grid item md={4} sm={6} xs={12}>
-                          <Typography variant="subtitle1" component="h3">
-                            Modèle
-                          </Typography>
-                          <Typography variant="h5" component="h1" style={{ fontWeight: 'bold', color: theme.palette.blue.first }}>
-                            {data?.MODELE || '-'}
-                          </Typography>
-                        </Grid>
-
-                        <Grid item md={4} sm={6} xs={12}>
-                          <Typography variant="subtitle1" component="h3">
-                            Mode d'acquisition
-                          </Typography>
-                          <Typography variant="h5" component="h1" style={{ fontWeight: 'bold', color: theme.palette.blue.first }}>
-                            {data?.TYPE_FINANCEMENT || '-'}
-                          </Typography>
-                        </Grid>
-
-                        <Grid item md={4} sm={6} xs={12}>
-                          <Typography variant="subtitle1" component="h3">
-                            Date d'achat
-                          </Typography>
-                          <Typography variant="h5" component="h1" style={{ fontWeight: 'bold', color: theme.palette.blue.first }}>
-                            {data?.DATE_FACTURE ? dayjs(data?.DATE_FACTURE).format('YYYY-MM-DD') : '-'}
-                          </Typography>
-                        </Grid>
-
-                        <Grid item md={4} sm={6} xs={12}>
-                          <Typography variant="subtitle1" component="h3">
-                            Site
-                          </Typography>
-                          <Typography variant="h5" component="h1" style={{ fontWeight: 'bold', color: theme.palette.blue.first }}>
-                            {data?.SITE || '-'}
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
+                    <Typography style={{ fontWeight: 400, color: theme.palette.blue.first }}>
+                      Dernier achat : <strong>{parcClientData[0]?.DATE_FACTURE ? dayjs(parcClientData[0]?.DATE_FACTURE).format("YYYY-MM-DD") : '-'}</strong>
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
             </Grid>
-          </>
+          </Box>
         }
-        {parcClientData?.data.length === 0 &&
+        {(parcClientData?.length > 0) &&
+          <ClientParkList parcClientData={parcClientData} viewDetailParc={viewDetailParc} setPage={setPage} isLoading={isLoading} />
+        }
+        {parcClientData?.length === 0 &&
           <Box
             sx={{
               display: 'flex',
@@ -373,7 +306,7 @@ const ClientPark = ({ theme, clientSelected }) => {
                   </Typography>
                 </Grid>
                 <Grid item md={6} sm={6} xs={6} color={theme.palette.blue.first} textAlign={"right"}>
-                  {detailParc?.CA ? Math.round(detailParc?.CA) + ' DH' : '0 DH'}
+                  {detailParc?.CA === 0 ? '0 DH' : (detailParc?.CA ? separateNumbersWithSpaces(Math.round(detailParc?.CA)) + ' DH': '-')}
                 </Grid>
               </Grid>
 

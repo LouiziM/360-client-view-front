@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Box, Typography, useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
+import { TypeClient } from 'utils';
 
 const DetailsStripe = ({ theme, clientSelected }) => {
 
@@ -11,11 +12,11 @@ const DetailsStripe = ({ theme, clientSelected }) => {
   useEffect(() => {
     if (clientSelected) {
       setList2Data([
-        clientSelected?.TYPECUST || "-",
+        clientSelected?.TYPECUST2 || "-",
         clientSelected?.CATEGORY || "-",
         clientSelected?.BIRTHDATE ? dayjs(clientSelected?.BIRTHDATE).format('DD/MM/YYYY') : "-",
         clientSelected?.PROFESSION || "-",
-        clientSelected?.TYPECUST === 'Particuliers' ? (clientSelected?.CIN || "-") : (clientSelected?.ICE || "-")
+        TypeClient?.includes(clientSelected?.TYPECUST2) ? (clientSelected?.CIN || "-") : (clientSelected?.ICE || "-")
       ]);
 
       setList4Data([
@@ -33,12 +34,12 @@ const DetailsStripe = ({ theme, clientSelected }) => {
     "Catégorie",
     "Date de naissance",
     "Profession",
-    clientSelected?.TYPECUST === 'Particuliers' ? "CIN" : "ICE"
+    TypeClient?.includes(clientSelected?.TYPECUST2) ? "CIN" : "ICE"
   ];
 
   const list3Data = [
     "IDC",
-    "N° Tél",
+    "N° Téléphone",
     "Email",
     "Ville",
     "Site"
@@ -74,8 +75,8 @@ const DetailsStripe = ({ theme, clientSelected }) => {
       <Grid item xs={12} sm={12} md={4} order={query900 ? 1 : 0}>
         <Box display='flex' alignItems='center' justifyContent='center' flexDirection='column'>
           <img
-            src={clientSelected?.TYPECUST === "Particuliers" ? require('../../assets/profile.png') : require('../../assets/company.png')}
-            alt={clientSelected?.TYPECUST === "Particuliers" ? "Image Client" : "Image Société"}
+            src={TypeClient?.includes(clientSelected?.TYPECUST2) ? require('../../assets/profile.png') : require('../../assets/company.png')}
+            alt={TypeClient?.includes(clientSelected?.TYPECUST2) ? "Image Client" : "Image Société"}
             style={{
               width: "230px",
               height: "230px",

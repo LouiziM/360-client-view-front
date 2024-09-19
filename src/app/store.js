@@ -1,48 +1,43 @@
-import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
-import { apiSlice } from "./api/apiSlice";
-
+import { configureStore } from "@reduxjs/toolkit";
 import authReducer from '../features/auth/authSlice';
 import clientSelectedReducer from '../features/state/clientSelectedSlice';
 
 import { persistStore, persistReducer } from "redux-persist";
-import sessionStorage from "redux-persist/lib/storage/session";
+import localStorage from "redux-persist/lib/storage";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { clientApiSlice } from "../features/state/clientApiSlice";
 
 // Configuration for redux-persist
 const persistConfig = {
   key: "auth",
-  storage: sessionStorage,
+  storage: localStorage,
 };
 
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 
 const persistConfigClientSelected = {
   key: "clientSelected",
-  storage: sessionStorage,
+  storage: localStorage,
 };
 
 const persistedClientSelectedReducer = persistReducer(persistConfigClientSelected, clientSelectedReducer);
 
 // Combine the reducers
 const rootReducer = {
-  [apiSlice.reducerPath]: apiSlice.reducer,
   auth: persistedAuthReducer,
   clientSelected: persistedClientSelectedReducer,
-  [clientApiSlice.reducerPath]: clientApiSlice.reducer,
 };
-
-const combinedMiddleware = [
-  ...getDefaultMiddleware(),
-  apiSlice.middleware,
-];
 
 // Create the store with combined reducers and middleware
 export const store = configureStore({
   reducer: rootReducer,
-  middleware: combinedMiddleware,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore the persist/PERSIST action
+        ignoredActions: ["persist/PERSIST"],
+      },
+    })
 });
-
 // Setup listeners for queries
 setupListeners(store.dispatch);
 

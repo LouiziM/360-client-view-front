@@ -91,9 +91,9 @@ const Sidebar = ({
             <List>
               {navItems?.map((element, index) => {
                 return (
-                  <>
+                  <React.Fragment key={index}>
                     {element?.canAccess &&
-                      <ListItem key={index} disablePadding>
+                      <ListItem disablePadding>
                         <ListItemButton
                           onClick={() => {
                             navigate(element?.link);
@@ -118,7 +118,7 @@ const Sidebar = ({
                         </ListItemButton>
                       </ListItem>
                     }
-                  </>
+                  </React.Fragment>
                 )
               })}
             </List>

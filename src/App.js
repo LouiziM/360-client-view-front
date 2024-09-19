@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import { selectCurrentToken, selectCurrentUser } from 'features/auth/authSlice';
 import { isAdmin } from 'utils/Roles';
 import { decryptUser } from 'utils/EncryptedUser';
+import Cookies from 'js-cookie';
 
 function App() {
 
@@ -54,8 +55,6 @@ function App() {
 export default App;
 
 const LoginRedirect = () => {
-  const storedToken = localStorage.getItem("authToken");
-  const token = useSelector(selectCurrentToken) || storedToken;
-
+  const token = Cookies.get("token_cdp");
   return token ? <Navigate to={"/"} replace /> : <Login />;
 };

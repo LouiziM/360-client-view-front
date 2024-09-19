@@ -1,38 +1,65 @@
 import { useTheme } from "@mui/material/styles";
 import { Box, Button, Grid, IconButton, Paper, Switch, TextField, Tooltip, Select, MenuItem, FormControl } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DataGrid, GridLogicOperator, GridToolbarQuickFilter } from "@mui/x-data-grid";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import SnackbarComponent from "./misc/snackBar";
 import { frFR } from "@mui/x-data-grid/locales";
-import { useGetAllUsersQuery, useUpdateMutation, useDeactivateMutation, useCreateMutation, useGetRolesQuery } from '../../features/user_crud/crudSlice';
 import { alpha } from '@mui/material/styles';
 import InputLabel from '@mui/material/InputLabel';
 import React from 'react';
 import { CustomTooltip } from "../client_profile/misc/customTooltip.tsx";
+import { myAxios } from "utils/Interceptor";
 
 dayjs.extend(utc);
 
 const UserManagement = () => {
   const theme = useTheme();
-  const matriculeRef = useRef(null);
 
   const initialUser = useMemo(() => ({
-    username: '',
-    creationDate: '',
-    lastLogin: '',
-    role: '',
-    active: ''
+    id: null,
+    matricule: null
   }), []);
 
   const [editUser, setEditUser] = useState(false);
-  const [userData, setUserData] = useState(initialUser);
-  const { data: users = [], isLoading } = useGetAllUsersQuery();
-  const [selectedRole, setSelectedRole] = useState('');
-  const { data: rolesList = [] } = useGetRolesQuery();
 
+  const [userData, setUserData] = useState(initialUser);
+  const [selectedRole, setSelectedRole] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [rolesList, setRolesList] = useState([]);
+
+  const fetchRoles = async () => {
+    try {
+      const res = await myAxios.get(`/users/roles`);
+      setRolesList(res?.data);
+    } catch (error) {
+      console.error(error?.response?.data?.message);
+    }
+  }
+
+  const fetchUsers = async () => {
+    try {
+      setIsLoading(true);
+      const res = await myAxios.get(`/users`);
+      setUsers(res?.data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error?.response?.data?.message);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const [snackbarState, setSnackbarState] = useState({
     open: false,
@@ -61,12 +88,8 @@ const UserManagement = () => {
 
 
   const handleChangeMatricule = (e) => {
-    setUserData({ ...userData, username: e.target.value.replace(/\D/g, '') });
+    setUserData({ ...userData, matricule: e.target.value.replace(/\D/g, '') });
   }
-
-  const [createMutation] = useCreateMutation();
-  const [updateMutation] = useUpdateMutation();
-  const [deactivateMutation] = useDeactivateMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -75,39 +98,30 @@ const UserManagement = () => {
       roles: selectedRole
     }
     try {
-      const res = await createMutation(user);
-
-      if (res?.data?.message) {
-        onHandleNormalSuccess(res?.data?.message);
-        setUserData(initialUser);
-        setSelectedRole('')
-      }
-
-
-      else onHandleNormalError(res?.error?.data?.message)
-
+      const res = await myAxios.post('/register', user);
+      onHandleNormalSuccess(res?.data?.message);
+      fetchUsers();
+      setUserData(initialUser);
+      setSelectedRole(null);
     } catch (error) {
-
+      onHandleNormalError(error?.response?.data?.message);
     }
   }
 
   const handleSubmitEdit = async (e) => {
     e.preventDefault();
     try {
-      console.log(selectedRole)
       const user = {
         ...userData,
         roles: selectedRole
       }
-      const res = await updateMutation(user);
-      if (res?.data?.message) {
-        onHandleNormalSuccess(res?.data?.message);
-        setUserData(initialUser);
-        setSelectedRole('')
-      }
-      else onHandleNormalError(res?.error?.data?.message)
-
+      const res = await myAxios.put('/users/update', user);
+      onHandleNormalSuccess(res?.data?.message);
+      fetchUsers();
+      setUserData(initialUser);
+      setSelectedRole(null);
     } catch (error) {
+      onHandleNormalError(error?.response?.data?.message);
     }
   }
 
@@ -120,128 +134,130 @@ const UserManagement = () => {
 
 
 
-    const columns = [
-        { 
-          field: 'username', 
-          headerName: 'Matricule', 
-          flex: 1, 
-          sortable: false, 
-          align: 'center', 
-          headerClassName: 'bold-weight', 
-          renderCell: ({ row }) => {
-            const paddedUsername = row.username ? String(row.username).padStart(6, '0') : '-';
-            return (
-              <CustomTooltip title={paddedUsername}>
-                {paddedUsername}
-              </CustomTooltip>
-            );
+  const columns = [
+    {
+      field: 'username',
+      headerName: 'Matricule',
+      flex: 1,
+      sortable: false,
+      align: 'center',
+      headerClassName: 'bold-weight',
+      renderCell: ({ row }) => {
+        const paddedUsername = row?.username ? String(row?.username).padStart(6, '0') : '-';
+        return (
+          <CustomTooltip title={paddedUsername}>
+            {paddedUsername}
+          </CustomTooltip>
+        );
+      }
+    },
+    {
+      field: 'roles',
+      headerName: 'Role',
+      flex: 1,
+      sortable: false,
+      align: 'center',
+      headerClassName: 'bold-weight',
+      renderCell: ({ row }) => {
+
+        return (
+          <CustomTooltip title={row?.role}>
+            {row?.role}
+          </CustomTooltip>
+        );
+      }
+    },
+    {
+      field: 'creationDate',
+      headerName: 'Date de création',
+      flex: 1,
+      sortable: false,
+      align: 'center',
+      headerClassName: 'bold-weight',
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row?.creationDate ? dayjs.utc(row?.creationDate).format("YYYY-MM-DD à HH:mm:ss") : '-'}>
+          {row?.creationDate ? dayjs.utc(row?.creationDate).format("YYYY-MM-DD à HH:mm:ss") : '-'}
+        </CustomTooltip>
+      )
+    },
+    {
+      field: 'lastLogin',
+      headerName: 'Dernière connexion',
+      flex: 1,
+      sortable: false,
+      align: 'center',
+      headerClassName: 'bold-weight',
+      renderCell: ({ row }) => (
+        <CustomTooltip title={row?.lastLogin ? dayjs.utc(row?.lastLogin).format("YYYY-MM-DD à HH:mm:ss") : '-'}>
+          {row?.lastLogin ? dayjs.utc(row?.lastLogin).format("YYYY-MM-DD à HH:mm:ss") : '-'}
+        </CustomTooltip>
+      )
+    },
+    {
+      field: 'active',
+      headerName: 'Statut',
+      flex: 1,
+      sortable: false,
+      align: 'center',
+      headerClassName: 'bold-weight',
+      renderCell: ({ row }) => {
+        const handleSwitchChange = async (event) => {
+          const uId = row.id;
+          const { checked } = event.target;
+          try {
+            const res = await myAxios.put('/users/deactivate', { id: uId, isActive: checked });
+            onHandleNormalSuccess(res?.data?.message);
+            fetchUsers();
+          } catch (error) {
+            onHandleNormalError(error?.response?.data?.message);
           }
-        },
-        { 
-          field: 'roles', 
-          headerName: 'Role', 
-          flex: 1, 
-          sortable: false, 
-          align: 'center', 
-          headerClassName: 'bold-weight', 
-          renderCell: ({ row }) => {
-          
-            return (
-              <CustomTooltip title={row.role}>
-                {row.role}
-              </CustomTooltip>
-            );
-          }
-        },
-        { 
-          field: 'creationDate', 
-          headerName: 'Date de création', 
-          flex: 1, 
-          sortable: false, 
-          align: 'center', 
-          headerClassName: 'bold-weight', 
-          renderCell: ({ row }) => (
-            <CustomTooltip title={row.creationDate ? dayjs.utc(row.creationDate).format("YYYY-MM-DD à HH:mm:ss") : '-'}>
-              {row.creationDate ? dayjs.utc(row.creationDate).format("YYYY-MM-DD à HH:mm:ss") : '-'}
-            </CustomTooltip>
-          )
-        },
-        { 
-          field: 'lastLogin', 
-          headerName: 'Dernière connexion', 
-          flex: 1, 
-          sortable: false, 
-          align: 'center', 
-          headerClassName: 'bold-weight', 
-          renderCell: ({ row }) => (
-            <CustomTooltip title={row.lastLogin ? dayjs.utc(row.lastLogin).format("YYYY-MM-DD à HH:mm:ss") : '-'}>
-              {row.lastLogin ? dayjs.utc(row.lastLogin).format("YYYY-MM-DD à HH:mm:ss") : '-'}
-            </CustomTooltip>
-          )
-        },
-        { 
-          field: 'active', 
-          headerName: 'Statut', 
-          flex: 1, 
-          sortable: false, 
-          align: 'center', 
-          headerClassName: 'bold-weight', 
-          renderCell: ({ row }) => {
-            const handleSwitchChange = async (event) => {
-              const uId = row.id;
-              const { checked } = event.target;
-              try {
-                const res = await deactivateMutation({ id: uId, isActive: checked });
-                onHandleNormalSuccess(res?.data?.message);
-              } catch (error) {
-                onHandleNormalError(error?.response?.data?.message);
-              }
-            };
-    
-            return (
-              <Tooltip title={row.active ? 'Active' : 'Inactive'}>
-                <Switch
-                  checked={row.active}
-                  onChange={handleSwitchChange}
-                  sx={{
-                    '& .MuiSwitch-switchBase.Mui-checked': {
-                      color: theme.palette.blue.first,
-                      '&:hover': {
-                        backgroundColor: alpha(theme.palette.blue.first, 0.4),
-                      },
-                    },
-                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                      backgroundColor: theme.palette.blue.first,
-                    },
-                  }}
-                />
-              </Tooltip>
-            );
-          }
-        },
-        { 
-          field: 'actions', 
-          headerName: 'Action', 
-          flex: 1, 
-          sortable: false, 
-          align: 'center', 
-          headerClassName: 'bold-weight', 
-          renderCell: ({ row }) => (
-            <Tooltip title="Modifier l'utilisateur" placement="top">
-              <IconButton onClick={() => {
-                setEditUser(true);
-                setUserData({ ...userData, ...row });
-                if (matriculeRef.current) {
-                  matriculeRef.current.focus();
-                }
-              }}>
-                <EditIcon />
-              </IconButton>
-            </Tooltip>
-          )
-        }
-    ];
-    
+        };
+
+        return (
+          <Tooltip title={row.active ? 'Active' : 'Inactive'}>
+            <Switch
+              checked={row?.active}
+              onChange={handleSwitchChange}
+              sx={{
+                '& .MuiSwitch-switchBase.Mui-checked': {
+                  color: theme.palette.blue.first,
+                  '&:hover': {
+                    backgroundColor: alpha(theme.palette.blue.first, 0.4),
+                  },
+                },
+                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                  backgroundColor: theme.palette.blue.first,
+                },
+              }}
+            />
+          </Tooltip>
+        );
+      }
+    },
+    {
+      field: 'actions',
+      headerName: 'Action',
+      flex: 1,
+      sortable: false,
+      align: 'center',
+      headerClassName: 'bold-weight',
+      renderCell: ({ row }) => (
+        <Tooltip title="Modifier l'utilisateur" placement="top">
+          <IconButton onClick={() => {
+            setEditUser(true);
+            setSelectedRole(row?.roles);
+            setUserData({
+              id: row?.UserId,
+              matricule: row?.username
+            });
+          }}>
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+      )
+    }
+  ];
+
 
 
   return (
@@ -256,16 +272,15 @@ const UserManagement = () => {
                     fullWidth
                     required
                     variant="outlined"
-                    id="username"
-                    name="username"
+                    id="matricule"
+                    name="matricule"
                     label="Matricule"
-                    value={userData.username || ''}
+                    value={userData?.matricule || ''}
                     onChange={handleChangeMatricule}
                     inputProps={{
                       minLength: 6,
                       maxLength: 6
                     }}
-                    inputRef={matriculeRef}
                     type="tel"
                   />
                 </Grid>
@@ -275,12 +290,12 @@ const UserManagement = () => {
                     <Select
                       labelId="role-label"
                       label="Rôle"
-                      value={selectedRole}
+                      value={selectedRole || ''}
                       onChange={(event) => setSelectedRole(event.target.value)}
                       required
                     >
-                      {rolesList && rolesList.map((role) => (
-                        <MenuItem key={role.roleId} value={role.roleId}>{role.roleName}</MenuItem>
+                      {rolesList && rolesList?.map((role) => (
+                        <MenuItem key={role?.roleId} value={role?.roleId}>{role?.roleName}</MenuItem>
                       ))}
                     </Select>
                   </FormControl>
@@ -332,6 +347,7 @@ const UserManagement = () => {
                         onClick={() => {
                           setUserData(initialUser);
                           setEditUser(false);
+                          setSelectedRole(null);
                         }}
                         fullWidth
                         variant="contained"
@@ -353,6 +369,7 @@ const UserManagement = () => {
                 }
               </Grid>
             </Box>
+            
             <Box sx={{
               mt: 4,
               mb: 4
@@ -364,7 +381,7 @@ const UserManagement = () => {
                 loading={isLoading}
                 pageSize={10}
                 rowHeight={50}
-                rowsPerPageOptions={[10, 25, 100]}
+                pageSizeOptions={[10, 25, 100]}
                 slots={{ toolbar: QuickSearchToolbar }}
                 initialState={{
                   filter: {
@@ -382,7 +399,6 @@ const UserManagement = () => {
                   '& .MuiDataGrid-columnHeaderTitle': {
                     fontWeight: 'bold',
                   }
-
                 }}
               />
 

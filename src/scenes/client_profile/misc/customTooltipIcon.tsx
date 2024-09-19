@@ -5,7 +5,7 @@ import type { TooltipProps } from "@mui/material/Tooltip";
 import {Typography } from '@mui/material';
 
 export const CustomTooltipIcon = styled(({ className, title, children, ...props }: TooltipProps) => (
-  <Tooltip title={title} classes={{ popper: className }}>
+  <Tooltip title={title} classes={{ popper: className }} {...props}>
     {children}
   </Tooltip>
 ))(({ theme }) => ({

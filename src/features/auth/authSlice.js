@@ -23,7 +23,7 @@ const authSlice = createSlice({
       state.token = null;
       localStorage.clear();
       sessionStorage.clear();
-      Cookies.remove('jwt');
+      Cookies.remove('token_cdp');
     },
   },
 });

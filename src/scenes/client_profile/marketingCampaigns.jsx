@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, frFR, gridClasses, GridLogicOperator, GridToolbarQuickFilter } from '@mui/x-data-grid';
-import { Grid, Box, Typography } from '@mui/material';
+import { Grid, Box, Typography, IconButton, Modal, useMediaQuery } from '@mui/material';
 import { ResponsiveRadialBar } from "@nivo/radial-bar";
 import { CustomTooltip } from './misc/customTooltip.tsx';
-
+import axios from 'axios';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { transformedPhoneNumber } from 'utils/index.js';
 
 const ODD_OPACITY = 0.4;
 
@@ -63,17 +65,29 @@ const LegendItem = styled(Box)({
   },
 });
 
-const MarketingCampaigns = ({ theme }) => {
+const MarketingCampaigns = ({ theme, clientSelected }) => {
   const defaultDataColors = ["#3f51b5", "#4caf50", "#00a7c4"];
   const [dataColors, setDataColors] = useState(defaultDataColors);
   const [hoveredIndex, setHoveredIndex] = useState(null);
-
   const data = [
     {
       id: "Réponses aux campagnes",
-      data: [{ x: "", y: 0 }]
+      data: [{ x: "", y: 50 }]
     }
   ];
+
+  //Marketing Campagains Data
+  const isNonMobile = useMediaQuery("(min-width: 600px)");
+  const [isLoading, setIsLoading] = useState(false);
+  const [marketingCampaigns, setMarketingCampaigns] = useState({});
+  const [viewContent, setViewContent] = useState(false);
+  const [rowCampaign, setRowCampaign] = useState(null);
+
+  const handleCloseContent = () => setViewContent(false);
+  const handleViewContent = (row) => {
+    setViewContent(true);
+    setRowCampaign(row);
+  }
 
   const handleLegendHover = (color, index) => {
     setHoveredIndex(index);
@@ -92,7 +106,7 @@ const MarketingCampaigns = ({ theme }) => {
       display="flex"
       flexDirection="column"
       position="absolute"
-      top="340px"
+      top="300px"
     >
       {data?.map((item, index) => (
         <LegendItem
@@ -132,20 +146,48 @@ const MarketingCampaigns = ({ theme }) => {
     return data;
   }, []);
 
+  const fetchMarketingCampaigns = async () => {
+    setIsLoading(true);
+    const phones = [clientSelected?.PHONE, clientSelected.PHONEPRI];
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_SERVER_URL_CAMPAIGN}`, {
+        params: {
+          email: clientSelected?.EMAIL,
+          phones: phones?.map(transformedPhoneNumber).filter(Boolean)
+        }
+      });
+      setMarketingCampaigns(res?.data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error?.response?.data?.message);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchMarketingCampaigns();
+  }, []);
+
   const columns = React.useMemo(
     () => [
       {
         field: 'titre',
         headerName: 'Titre',
         flex: 1,
-        align:"center",
+        minWidth: 160,
+        align: "center",
         renderCell: function render({ row }) {
           return (
-            <CustomTooltip title={row.titre}>
-              <Typography >
-                {row.titre}
-              </Typography>
-            </CustomTooltip>
+            <>
+              {row?.titre ?
+                <CustomTooltip title={row?.titre}>
+                  <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} >
+                    {row?.titre}
+                  </Typography>
+                </CustomTooltip>
+                : '-'
+              }
+            </>
           );
         },
       },
@@ -153,47 +195,41 @@ const MarketingCampaigns = ({ theme }) => {
         field: 'marque',
         headerName: 'Marque',
         flex: 1,
-        align:"center",
+        minWidth: 160,
+        align: "center",
         renderCell: function render({ row }) {
           return (
-            <CustomTooltip title={row.marque}>
-              <Typography
-                sx={{
-                  whiteSpace: 'pre-wrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitLineClamp: '1',
-                  WebkitBoxOrient: 'vertical',
-                }}
-              >
-                {row.marque}
-              </Typography>
-            </CustomTooltip>
+            <>
+              {row?.marque ?
+                <CustomTooltip title={row?.marque}>
+                  <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} >
+                    {row?.marque}
+                  </Typography>
+                </CustomTooltip>
+                : '-'
+              }
+            </>
           );
         },
       },
       {
         field: 'type',
         headerName: 'Type',
-        align:"center",
+        align: "center",
         flex: 1,
+        minWidth: 60,
         renderCell: function render({ row }) {
           return (
-            <CustomTooltip title={row.type}>
-              <Typography
-                sx={{
-                  whiteSpace: 'pre-wrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitLineClamp: '1',
-                  WebkitBoxOrient: 'vertical',
-                }}
-              >
-                {row.type}
-              </Typography>
-            </CustomTooltip>
+            <>
+              {row?.type ?
+                <CustomTooltip title={row?.type}>
+                  <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} >
+                    {row?.type}
+                  </Typography>
+                </CustomTooltip>
+                : '-'
+              }
+            </>
           );
         },
       },
@@ -201,23 +237,20 @@ const MarketingCampaigns = ({ theme }) => {
         field: 'date',
         headerName: 'Date',
         flex: 1,
-        align:"center",
+        minWidth: 200,
+        align: "center",
         renderCell: function render({ row }) {
           return (
-            <CustomTooltip title={row.date}>
-              <Typography
-                sx={{
-                  whiteSpace: 'pre-wrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitLineClamp: '1',
-                  WebkitBoxOrient: 'vertical',
-                }}
-              >
-                {row.date}
-              </Typography>
-            </CustomTooltip>
+            <>
+              {row?.date ?
+                <CustomTooltip title={row?.date}>
+                  <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} >
+                    {row?.date}
+                  </Typography>
+                </CustomTooltip>
+                : '-'
+              }
+            </>
           );
         },
       },
@@ -225,23 +258,19 @@ const MarketingCampaigns = ({ theme }) => {
         field: 'contenu',
         headerName: 'Contenu',
         flex: 1,
-        align:"center",
+        minWidth: 60,
+        align: "center",
         renderCell: function render({ row }) {
           return (
-            <CustomTooltip title={row.contenu}>
-              <Typography
-                sx={{
-                  whiteSpace: 'pre-wrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitLineClamp: '1',
-                  WebkitBoxOrient: 'vertical',
-                }}
-              >
-                {row.contenu}
-              </Typography>
-            </CustomTooltip>
+            <>
+              {!row?.content ? '-' :
+                <>
+                  <IconButton onClick={() => handleViewContent(row)}>
+                    <VisibilityIcon sx={{ color: theme.palette.blue.first }} />
+                  </IconButton>
+                </>
+              }
+            </>
           );
         },
       },
@@ -320,13 +349,14 @@ const MarketingCampaigns = ({ theme }) => {
               />
               <Legend />
             </Grid>
-            <Grid item xs={12} sm={12} md={8} mt={{ xl:0, lg: 0, md: 0, sm: "90px", xs: "90px" }}>
+            <Grid item xs={12} sm={12} md={8} mt={{ xl: 0, lg: 0, md: 0, sm: "10px", xs: "10px" }}>
               <Typography variant="h5" fontWeight="bold" color={theme.palette.blue.first} marginBottom={"20px"} textAlign={"center"}>
                 Historique de participation aux campagnes
               </Typography>
               <StripedDataGrid
-                rows={[]}
+                rows={marketingCampaigns?.data || []}
                 columns={columns}
+                loading={isLoading}
                 getRowClassName={(params) =>
                   params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
                 }
@@ -364,6 +394,30 @@ const MarketingCampaigns = ({ theme }) => {
           </Grid>
         </Box>
       </Box>
+
+      {/* Modal of Content Marketing Campaign */}
+      <Modal
+        open={viewContent}
+        onClose={handleCloseContent}
+        aria-labelledby="modal-mc-content"
+        aria-describedby="modal-mc-content-description"
+      >
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: isNonMobile ? 500 : 300,
+          bgcolor: theme.palette.white.first,
+          border: 'none',
+          p: 4,
+          maxHeight: "90%",
+          overflow: "auto"
+        }}>
+          <div dangerouslySetInnerHTML={{ __html: rowCampaign?.content }} />
+        </Box>
+      </Modal>
+
     </Grid>
   );
 

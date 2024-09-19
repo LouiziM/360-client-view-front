@@ -2,7 +2,7 @@ import { Grid, Box, Typography } from '@mui/material';
 import bagIcon from './assets/bag.png';
 import dollaSignIcon from './assets/dollasign.png';
 import handoutIcon from './assets/handout.png';
-import { separateNumbersWithSpaces } from '../../utils/separateNumbers';
+import { separateNumbersWithSpaces } from '../../utils';
 
 const FinancialData = ({ theme, clientSelected, completion }) => {
   

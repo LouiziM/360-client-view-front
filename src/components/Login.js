@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../features/auth/authSlice';
-import { useLoginMutation } from '../features/auth/authApiSlice';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -14,6 +13,7 @@ import SatisfactionClient2 from '../assets/satisfaction_client_2.png';
 import RelationClient from '../assets/relation_client.png';
 import InformationClient from '../assets/information_client.png';
 import { Grid, useTheme } from '@mui/material';
+import { myAxios } from 'utils/Interceptor';
 
 const Login = () => {
 
@@ -30,7 +30,7 @@ const Login = () => {
   const [errMsg, setErrMsg] = useState('');
   const navigate = useNavigate();
 
-  const [login] = useLoginMutation();
+  // const [login] = useLoginMutation();
   const dispatch = useDispatch();
   const [remember, setRemember] = useState(false);
 
@@ -48,21 +48,13 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const userData = await login({ user, pwd }).unwrap();
-      dispatch(setCredentials({ ...userData, remember }));
+      const userData = await myAxios.post('/auth', { user, pwd });
+      dispatch(setCredentials({ ...userData?.data, remember }));
       setUser('');
       setPwd('');
       navigate('/');
     } catch (err) {
-      if (!err?.originalStatus) {
-        setErrMsg('Aucune réponse du serveur');
-      } else if (err.originalStatus === 400) {
-        setErrMsg('Nom d\'utilisateur ou mot de passe manquant');
-      } else if (err.originalStatus === 401) {
-        setErrMsg('Nom d\'utilisateur ou mot de passe incorrect');
-      } else {
-        setErrMsg('Échec de la connexion');
-      }
+      setErrMsg(err?.response?.data?.message);
       errRef.current && errRef.current.focus();
     }
   };
@@ -86,14 +78,14 @@ const Login = () => {
         overflow: 'inherit'
       }
     }}>
-      <Grid item md={7} xs={12} sx={{
+      <Grid item md={8} xs={12} sx={{
         '@media (max-width: 900px)': {
           display: "none"
         }
       }}>
         <img src={images[imageLogin]} alt={imageLogin} width={"100%"} height={"100%"} style={{ objectFit: "cover" }} />
       </Grid>
-      <Grid item md={5} xs={12} sx={{
+      <Grid item md={4} xs={12} sx={{
         display: "flex",
         justifyContent: "center",
         flexDirection: "column",
@@ -105,9 +97,9 @@ const Login = () => {
           color: theme.palette.blue.first,
           textAlign: "center"
         }}>
-          Customer Data Profile
+          Customer Data Platform
         </Typography>
-        <Box component={"form"} onSubmit={handleSubmit} sx={{ ml: 4, mr: 4, mt: 10 }}>
+        <Box component={"form"} onSubmit={handleSubmit} sx={{ ml: 2, mr: 2, mt: 10 }}>
           <TextField
             variant="outlined"
             required
@@ -135,13 +127,7 @@ const Login = () => {
             type="password"
             onChange={handlePwdInput}
             value={pwd}
-            sx={{ mb: 2 }}
-          />
-
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" onChange={handleRememberMeChange} />}
-            label="Se souvenir de moi"
-            sx={{ mb: 2 }}
+            sx={{ mb: 4 }}
           />
 
           <Typography variant="body2" color="error">

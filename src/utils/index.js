@@ -11,3 +11,13 @@ export const separateNumbersWithSpaces = (number) => {
     // Join the chunks with space and return
     return chunks.join(' ');
 }
+
+export const TypeClient = ["Particuliers", "Personnel de la Société"];
+
+export const transformedPhoneNumber = (phone) => {
+    if (!phone) return '';
+    if (phone?.startsWith('+212')) {
+      return phone?.replace('+212', '0');
+    }
+    return phone;
+  }
